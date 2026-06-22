@@ -59,7 +59,7 @@ async def get_ip_info(ip: str):
 async def home():
     """Home page with QR code"""
     # Generate QR code for scan endpoint
-    qr_url = "http://localhost:8000/scan"
+    qr_url = "https://public-awarness-demo.onrender.com/scan"
 
     qr = qrcode.QRCode(version=1, box_size=10, border=4)
     qr.add_data(qr_url)
@@ -107,7 +107,7 @@ async def home():
                     </ul>
                 </div>
 
-                <p class="note">Or visit: <a href="/scan">localhost:8000/scan</a></p>
+                <p class="note">Or visit: <a href="/scan">https://public-awarness-demo.onrender.com/scan</a></p>
             </div>
         </div>
     </body>
