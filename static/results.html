@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Results</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Your Device Information</h1>
+            <p class="subtitle">What websites can automatically see</p>
+        </div>
+
+        <div class="results-section">
+            <div class="success-box">
+                <h3>✅ Analysis Complete</h3>
+                <p>Here is what a website can automatically learn about your device without asking for permission.</p>
+            </div>
+
+            <div class="data-category">
+                <h3>🌍 Network & Location Information</h3>
+                <div class="data-grid">
+                    <div class="data-item">
+                        <div class="data-label">IP Address</div>
+                        <div class="data-value" id="ip_address">Loading...</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-label">City</div>
+                        <div class="data-value" id="city">Loading...</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-label">Region/State</div>
+                        <div class="data-value" id="region">Loading...</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-label">Country</div>
+                        <div class="data-value" id="country">Loading...</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-label">ISP</div>
+                        <div class="data-value" id="isp">Loading...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="data-category">
+                <h3>💻 Browser & System</h3>
+                <div class="data-grid">
+                    <div class="data-item">
+                        <div class="data-label">Browser</div>
+                        <div class="data-value" id="browser">Loading...</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-label">Browser Version</div>
+                        <div class="data-value" id="browser_version">Loading...</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-label">Operating System</div>
+                        <div class="data-value" id="os">Loading...</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-label">Platform</div>
+                        <div class="data-value" id="platform">Loading...</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-label">Device Type</div>
+                        <div class="data-value" id="device_type">Loading...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="data-category">
+                <h3>🖥️ Display & Settings</h3>
+                <div class="data-grid">
+                    <div class="data-item">
+                        <div class="data-label">Screen Resolution</div>
+                        <div class="data-value" id="screen_resolution">Loading...</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-label">Viewport Size</div>
+                        <div class="data-value" id="viewport_resolution">Loading...</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-label">Color Depth</div>
+                        <div class="data-value" id="color_depth">Loading...</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-label">Language</div>
+                        <div class="data-value" id="language">Loading...</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-label">Timezone</div>
+                        <div class="data-value" id="timezone">Loading...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="data-category">
+                <h3>⚙️ Capabilities</h3>
+                <div class="data-grid">
+                    <div class="data-item">
+                        <div class="data-label">Cookies Enabled</div>
+                        <div class="data-value" id="cookies_enabled">Loading...</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-label">JavaScript Enabled</div>
+                        <div class="data-value" id="javascript_enabled">Yes</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-label">Touch Support</div>
+                        <div class="data-value" id="touch_support">Loading...</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-label">Referrer URL</div>
+                        <div class="data-value" id="referrer">Loading...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="data-category">
+                <h3>🔒 What Websites CANNOT Automatically Access</h3>
+                <div class="warning-box">
+                    <h4>Modern browsers protect your privacy!</h4>
+                    <p>Without your explicit permission, websites <strong>CANNOT</strong> access:</p>
+                    <ul>
+                        <li>Your phone number</li>
+                        <li>Your contacts list</li>
+                        <li>Your SMS or text messages</li>
+                        <li>Your WhatsApp or messaging app data</li>
+                        <li>Your photos or camera roll</li>
+                        <li>Your files or documents</li>
+                        <li>Your installed applications</li>
+                        <li>Your microphone or camera (without permission)</li>
+                        <li>Your precise GPS location (without permission)</li>
+                    </ul>
+                    <p style="margin-top: 15px;"><strong>These features require explicit user permission through browser prompts.</strong></p>
+                </div>
+            </div>
+
+            <div class="data-category">
+                <h3>📝 Technical Details</h3>
+                <div class="data-item" style="width: 100%;">
+                    <div class="data-label">User Agent String</div>
+                    <div class="data-value" id="user_agent" style="font-size: 0.9em; word-break: break-all;">Loading...</div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="/" class="btn">🔄 Start Over</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load and display the collected data
+        function displayResults() {
+            const dataStr = sessionStorage.getItem('collectedData');
+
+            if (!dataStr) {
+                // Try to get the most recent data from the API
+                fetch('/api/data')
+                    .then(response => response.json())
+                    .then(allData => {
+                        if (allData && allData.length > 0) {
+                            const latestData = allData[allData.length - 1];
+                            populateData(latestData);
+                        } else {
+                            showError();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data:', error);
+                        showError();
+                    });
+            } else {
+                const data = JSON.parse(dataStr);
+                populateData(data);
+            }
+        }
+
+        function populateData(data) {
+            // Network & Location
+            document.getElementById('ip_address').textContent = data.ip_address || 'Unknown';
+            document.getElementById('city').textContent = data.city || 'Unknown';
+            document.getElementById('region').textContent = data.region || 'Unknown';
+            document.getElementById('country').textContent = data.country || 'Unknown';
+            document.getElementById('isp').textContent = data.isp || 'Unknown';
+
+            // Browser & System
+            document.getElementById('browser').textContent = data.browser || 'Unknown';
+            document.getElementById('browser_version').textContent = data.browser_version || 'Unknown';
+            document.getElementById('os').textContent = data.os || 'Unknown';
+            document.getElementById('platform').textContent = data.platform || 'Unknown';
+            document.getElementById('device_type').textContent = data.device_type || 'Unknown';
+
+            // Display & Settings
+            document.getElementById('screen_resolution').textContent = data.screen_resolution || 'Unknown';
+            document.getElementById('viewport_resolution').textContent = data.viewport_resolution || 'Unknown';
+            document.getElementById('color_depth').textContent = data.color_depth || 'Unknown';
+            document.getElementById('language').textContent = data.language || 'Unknown';
+            document.getElementById('timezone').textContent = data.timezone || 'Unknown';
+
+            // Capabilities
+            document.getElementById('cookies_enabled').textContent = data.cookies_enabled ? 'Yes' : 'No';
+            document.getElementById('touch_support').textContent = data.touch_support ? 'Yes' : 'No';
+            document.getElementById('referrer').textContent = data.referrer || 'None';
+
+            // Technical
+            document.getElementById('user_agent').textContent = data.user_agent || 'Unknown';
+        }
+
+        function showError() {
+            document.querySelector('.results-section').innerHTML = `
+                <div class="warning-box">
+                    <h3>⚠️ No data available</h3>
+                    <p>Please scan the QR code again to collect device information.</p>
+                    <a href="/" class="btn">Go to Home</a>
+                </div>
+            `;
+        }
+
+        // Load results when page loads
+        window.addEventListener('DOMContentLoaded', displayResults);
+    </script>
+</body>
+</html>

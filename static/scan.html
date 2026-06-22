@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collecting Device Information</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Analyzing Your Device</h1>
+            <p class="subtitle">Collecting publicly available information</p>
+        </div>
+
+        <div id="content" class="loading">
+            <div class="spinner"></div>
+            <h2>Collecting device information...</h2>
+            <p>Please wait while we gather publicly available data.</p>
+        </div>
+    </div>
+
+    <script>
+        // Function to detect browser
+        function detectBrowser() {
+            const userAgent = navigator.userAgent;
+            let browser = "Unknown";
+            let version = "Unknown";
+
+            if (userAgent.indexOf("Firefox") > -1) {
+                browser = "Firefox";
+                version = userAgent.match(/Firefox\/([0-9.]+)/)?.[1] || "Unknown";
+            } else if (userAgent.indexOf("Edg") > -1) {
+                browser = "Microsoft Edge";
+                version = userAgent.match(/Edg\/([0-9.]+)/)?.[1] || "Unknown";
+            } else if (userAgent.indexOf("Chrome") > -1) {
+                browser = "Chrome";
+                version = userAgent.match(/Chrome\/([0-9.]+)/)?.[1] || "Unknown";
+            } else if (userAgent.indexOf("Safari") > -1) {
+                browser = "Safari";
+                version = userAgent.match(/Version\/([0-9.]+)/)?.[1] || "Unknown";
+            }
+
+            return { browser, version };
+        }
+
+        // Function to detect OS
+        function detectOS() {
+            const userAgent = navigator.userAgent;
+
+            if (userAgent.indexOf("Win") > -1) return "Windows";
+            if (userAgent.indexOf("Mac") > -1) return "MacOS";
+            if (userAgent.indexOf("Linux") > -1) return "Linux";
+            if (userAgent.indexOf("Android") > -1) return "Android";
+            if (userAgent.indexOf("iOS") > -1 || userAgent.indexOf("iPhone") > -1 || userAgent.indexOf("iPad") > -1) return "iOS";
+
+            return "Unknown";
+        }
+
+        // Function to detect device type
+        function detectDeviceType() {
+            const userAgent = navigator.userAgent;
+
+            if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(userAgent)) {
+                return "Tablet";
+            }
+            if (/Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(userAgent)) {
+                return "Mobile";
+            }
+            return "Desktop";
+        }
+
+        // Function to check touch support
+        function hasTouchSupport() {
+            return ('ontouchstart' in window) ||
+                   (navigator.maxTouchPoints > 0) ||
+                   (navigator.msMaxTouchPoints > 0);
+        }
+
+        // Collect all device information
+        async function collectDeviceInfo() {
+            const { browser, version } = detectBrowser();
+
+            const deviceInfo = {
+                // Browser information
+                browser: browser,
+                browser_version: version,
+                user_agent: navigator.userAgent,
+
+                // System information
+                os: detectOS(),
+                platform: navigator.platform,
+                device_type: detectDeviceType(),
+
+                // Screen information
+                screen_resolution: `${screen.width}x${screen.height}`,
+                viewport_resolution: `${window.innerWidth}x${window.innerHeight}`,
+                color_depth: `${screen.colorDepth}-bit`,
+
+                // Settings
+                language: navigator.language,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                cookies_enabled: navigator.cookieEnabled,
+                touch_support: hasTouchSupport(),
+
+                // Referrer
+                referrer: document.referrer || "Direct"
+            };
+
+            return deviceInfo;
+        }
+
+        // Send collected data to server
+        async function sendData() {
+            try {
+                const deviceInfo = await collectDeviceInfo();
+
+                const response = await fetch('/collect', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(deviceInfo)
+                });
+
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    // Store data in sessionStorage and redirect
+                    sessionStorage.setItem('collectedData', JSON.stringify(result.data));
+                    window.location.href = '/results';
+                } else {
+                    throw new Error('Failed to collect data');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('content').innerHTML = `
+                    <div class="warning-box">
+                        <h3>Error collecting data</h3>
+                        <p>Please try again or check the console for details.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Start data collection when page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            // Simulate a delay for better UX
+            setTimeout(() => {
+                sendData();
+            }, 1500);
+        });
+    </script>
+</body>
+</html>
