@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cybersecurity Education - Protect Your Data</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+        }
+        h1 { color: #1a1a2e; font-size: 34px; margin-bottom: 10px; }
+        .subtitle { color: #666; font-size: 18px; margin-bottom: 30px; }
+        .lesson {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            border-left: 5px solid #667eea;
+        }
+        .lesson h2 { color: #333; margin-bottom: 15px; font-size: 22px; }
+        .lesson ul { padding-left: 20px; }
+        .lesson li { margin: 10px 0; line-height: 1.6; color: #555; }
+        .tip-box {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        .tip-box h3 { color: #155724; margin-bottom: 8px; }
+        .tip-box p { color: #155724; }
+        .danger-box {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        .danger-box h3 { color: #721c24; margin-bottom: 8px; }
+        .danger-box p { color: #721c24; }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        .btn {
+            padding: 14px 35px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102,126,234,0.4);
+        }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn-secondary:hover { background: #5a6268; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-danger:hover { background: #c82333; }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            text-align: center;
+            font-size: 13px;
+            color: #999;
+        }
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            h1 { font-size: 26px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📚 Cybersecurity Education</h1>
+        <p class="subtitle">Learn how to protect your personal data</p>
+
+        <div class="danger-box">
+            <h3>⚠️ What You Just Experienced</h3>
+            <p>
+                You granted permissions to an app and it accessed your real contacts and photos. 
+                This is exactly what malicious apps do!
+            </p>
+        </div>
+
+        <div class="lesson">
+            <h2>🔐 1. Always Verify QR Codes</h2>
+            <ul>
+                <li><strong>Don't scan random QR codes:</strong> They can lead to malicious websites</li>
+                <li><strong>Check the URL:</strong> Before entering any information, verify the website address</li>
+                <li><strong>Use a QR scanner with preview:</strong> See the URL before opening it</li>
+            </ul>
+        </div>
+
+        <div class="lesson">
+            <h2>📱 2. App Permissions - Be Selective</h2>
+            <ul>
+                <li><strong>Grant minimum permissions:</strong> Only give apps the permissions they need</li>
+                <li><strong>Review permissions regularly:</strong> Check which apps have access to your data</li>
+                <li><strong>Contacts and photos are sensitive:</strong> Think twice before granting these permissions</li>
+                <li><strong>Location data is dangerous:</strong> Only share when absolutely necessary</li>
+            </ul>
+        </div>
+
+        <div class="lesson">
+            <h2>🛡️ 3. Protect Your Personal Data</h2>
+            <ul>
+                <li><strong>Use strong passwords:</strong> Different password for each account</li>
+                <li><strong>Enable 2FA:</strong> Two-factor authentication adds an extra layer of security</li>
+                <li><strong>Be careful what you share:</strong> Think before posting personal information online</li>
+                <li><strong>Regular backups:</strong> Keep your important data backed up securely</li>
+            </ul>
+        </div>
+
+        <div class="tip-box">
+            <h3>💡 Pro Tips for Cybersecurity</h3>
+            <p>
+                ✅ Use a password manager<br>
+                ✅ Keep your apps and OS updated<br>
+                ✅ Use a VPN on public WiFi<br>
+                ✅ Be skeptical of unsolicited requests<br>
+                ✅ Check app reviews before installing<br>
+                ✅ Monitor your accounts for suspicious activity
+            </p>
+        </div>
+
+        <div style="background: #e8f4f8; padding: 20px; border-radius: 15px; margin: 20px 0;">
+            <h3 style="color: #0f3460;">📊 Real Statistics</h3>
+            <ul style="color: #0f3460; padding-left: 20px;">
+                <li>93% of data breaches involve personal information</li>
+                <li>85% of apps request unnecessary permissions</li>
+                <li>60% of people don't read permission requests</li>
+                <li>1 in 3 users has been a victim of data theft</li>
+            </ul>
+        </div>
+
+        <div class="btn-group">
+            <a href="/" class="btn btn-primary">🏠 Back to Home</a>
+            <a href="/records" class="btn btn-secondary">📋 View Records</a>
+            <a href="/quiz" class="btn btn-danger">🔄 Try Again</a>
+        </div>
+
+        <div class="footer">
+            <p>🔐 Cybersecurity Awareness Demo • For Educational Purposes Only</p>
+            <p style="margin-top: 5px;">Protect your data, protect your privacy</p>
+        </div>
+    </div>
+</body>
+</html>

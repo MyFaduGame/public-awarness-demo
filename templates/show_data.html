@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Your Data - Cybersecurity Demo</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+        }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { color: #dc3545; font-size: 32px; }
+        .header .icon { font-size: 60px; display: block; margin-bottom: 10px; }
+        .alert-box {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        .alert-box h3 { color: #721c24; margin-bottom: 8px; }
+        .alert-box p { color: #721c24; font-size: 16px; }
+        .data-section {
+            margin: 25px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border-left: 4px solid #667eea;
+        }
+        .data-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        .data-section .count {
+            background: #667eea;
+            color: white;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-left: 12px;
+        }
+        .data-grid { display: grid; gap: 10px; }
+        .data-item {
+            background: white;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #dee2e6;
+        }
+        .data-item .name { font-weight: 600; color: #333; }
+        .data-item .detail { color: #666; font-size: 14px; margin-top: 4px; }
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .photo-item {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .photo-item img { width: 100%; height: 150px; object-fit: cover; }
+        .photo-item .caption {
+            padding: 8px;
+            background: white;
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+        }
+        .btn {
+            display: inline-block;
+            padding: 14px 35px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            margin: 5px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102,126,234,0.4);
+        }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-danger:hover { background: #c82333; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-success:hover { background: #218838; }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+        }
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            .header h1 { font-size: 24px; }
+            .photo-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <span class="icon">⚠️</span>
+            <h1>Your Data Has Been Collected!</h1>
+            <p style="color: #666; font-size: 18px; margin-top: 5px;">
+                Here's what was accessed from your device
+            </p>
+        </div>
+
+        <div class="alert-box">
+            <h3>🔴 Security Alert!</h3>
+            <p>
+                This is exactly how hackers can access your personal information 
+                when you scan malicious QR codes or grant permissions to untrusted apps.
+            </p>
+        </div>
+
+        {% if data.contacts %}
+        <div class="data-section">
+            <h3>👥 Contacts <span class="count">{{ data.contacts|length }}</span></h3>
+            <div class="data-grid">
+                {% for contact in data.contacts[:20] %}
+                <div class="data-item">
+                    <div class="name">{{ contact.name or 'Unknown' }}</div>
+                    <div class="detail">
+                        {% if contact.tel %}📞 {{ contact.tel|join(', ') }}{% endif %}
+                        {% if contact.email %}✉️ {{ contact.email|join(', ') }}{% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+                {% if data.contacts|length > 20 %}
+                <p style="color: #666; font-size: 14px; padding: 10px;">
+                    ... and {{ data.contacts|length - 20 }} more contacts
+                </p>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if data.photos %}
+        <div class="data-section">
+            <h3>🖼️ Photos <span class="count">{{ data.photos|length }}</span></h3>
+            <div class="photo-grid">
+                {% for photo in data.photos[:8] %}
+                <div class="photo-item">
+                    <img src="{{ photo.data }}" alt="{{ photo.name }}">
+                    <div class="caption">{{ photo.name[:20] }}</div>
+                </div>
+                {% endfor %}
+                {% if data.photos|length > 8 %}
+                <div class="photo-item" style="background: #e9ecef; display: flex; align-items: center; justify-content: center; height: 150px;">
+                    <span style="color: #666;">+ {{ data.photos|length - 8 }} more</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div style="margin: 30px 0; padding: 20px; background: #d4edda; border-radius: 15px; border: 2px solid #28a745;">
+            <h3 style="color: #155724; margin-bottom: 10px;">✅ What You Just Learned</h3>
+            <ul style="color: #155724; padding-left: 20px;">
+                <li>QR codes can lead to malicious sites that request dangerous permissions</li>
+                <li>Apps can access your contacts, photos, and other personal data</li>
+                <li>Always verify app permissions before granting access</li>
+                <li>Your data is valuable - protect it!</li>
+            </ul>
+        </div>
+
+        <div class="btn-group">
+            <a href="/education" class="btn btn-primary">📚 Learn More</a>
+            <a href="/" class="btn btn-danger">🚫 Start Over</a>
+            <button onclick="window.location.reload()" class="btn btn-success">🔄 Refresh</button>
+        </div>
+
+        <div class="footer">
+            <p>🔐 Cybersecurity Awareness Demo • Session: {{ session_id[:8] }}</p>
+        </div>
+    </div>
+</body>
+</html>

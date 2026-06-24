@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cybersecurity Awareness Demo</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        .logo { font-size: 48px; margin-bottom: 10px; }
+        h1 { color: #1a1a2e; font-size: 28px; margin-bottom: 8px; }
+        .subtitle { color: #666; font-size: 16px; margin-bottom: 30px; }
+        .qr-wrapper {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        .qr-wrapper img { max-width: 250px; height: auto; }
+        .scan-instructions { color: #666; font-size: 14px; margin-top: 15px; }
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .warning-box h4 { color: #856404; margin-bottom: 5px; }
+        .warning-box p { color: #856404; font-size: 14px; }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102,126,234,0.4);
+        }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn-secondary:hover { background: #5a6268; }
+        .stats {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+        .stats strong { color: #1a1a2e; }
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            font-size: 12px;
+            color: #999;
+        }
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            h1 { font-size: 24px; }
+            .qr-wrapper img { max-width: 180px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🔐</div>
+        <h1>Cybersecurity Awareness</h1>
+        <p class="subtitle">See what happens when you scan a QR code</p>
+        
+        <div class="qr-wrapper">
+            <h3 style="color: #333; margin-bottom: 15px;">📱 Scan this QR Code</h3>
+            <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code">
+            <p class="scan-instructions">
+                Scan with your phone camera to see what data you're sharing
+            </p>
+        </div>
+
+        <div class="warning-box">
+            <h4>⚠️ Educational Demonstration</h4>
+            <p>This shows how easily your contacts and photos can be accessed when you grant permissions to untrusted apps.</p>
+        </div>
+
+        <div class="btn-group">
+            <a href="/quiz" class="btn btn-primary">📝 Take the Quiz</a>
+            <a href="/education" class="btn btn-secondary">📚 Learn More</a>
+        </div>
+
+        <div class="stats">
+            <strong>🚨 Did you know?</strong>
+            <p style="margin-top: 5px; font-size: 14px; color: #555;">
+                93% of data breaches involve unauthorized access to personal information. 
+                Be careful what permissions you grant!
+            </p>
+        </div>
+
+        <div class="footer">
+            <p>🔐 Cybersecurity Awareness Demo • For Educational Purposes Only</p>
+        </div>
+    </div>
+</body>
+</html>
