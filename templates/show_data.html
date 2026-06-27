@@ -133,7 +133,10 @@
             <span class="icon">⚠️</span>
             <h1>Your Data Has Been STOLEN!</h1>
             <p style="color: #666; font-size: 18px; margin-top: 5px;">
-                Here's what we collected WITHOUT asking for permissions
+                We collected all of this SILENTLY while you answered questions
+            </p>
+            <p style="color: #d63031; font-size: 16px; margin-top: 10px; font-weight: 600;">
+                NO uploads requested. NO obvious permissions. Just automatic theft.
             </p>
         </div>
 
@@ -254,6 +257,78 @@
                 <div>Browser Fingerprint: CAPTURED</div>
                 <div>Network Type: {{ data.network_info.type if data.network_info else 'Unknown' }}</div>
                 <div style="color: #ff0000; font-weight: bold; margin-top: 10px;">STATUS: COMPLETE SURVEILLANCE ACTIVE</div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Clipboard Data (SUPER SCARY - Could be OTP/Password!) -->
+        {% if data.clipboard %}
+        <div class="data-section" style="border-left: 4px solid #8b0000; background: #ffe6e6;">
+            <h3 style="color: #8b0000;">📋 YOUR CLIPBOARD - STOLEN! <span class="count" style="background: #8b0000;">COULD BE PASSWORD/OTP!</span></h3>
+            <p style="color: #8b0000; font-weight: 600; margin-bottom: 15px; font-size: 16px;">
+                🚨 THIS WAS YOUR LAST COPIED TEXT!
+            </p>
+
+            <div style="background: #000; color: #ff0000; padding: 20px; border-radius: 10px; font-family: monospace; font-size: 16px; text-align: center;">
+                <div style="margin-bottom: 10px; color: #00ff00;">// YOUR CLIPBOARD CONTENT:</div>
+                <div style="font-size: 20px; font-weight: bold; word-break: break-all;">
+                    "{{ data.clipboard }}"
+                </div>
+            </div>
+
+            <div style="background: #8b0000; color: white; padding: 20px; border-radius: 10px; margin-top: 15px;">
+                <p style="font-weight: 600; font-size: 16px; margin-bottom: 10px;">
+                    💀 IF THIS WAS YOUR:
+                </p>
+                <ul style="padding-left: 25px; line-height: 2; font-size: 15px;">
+                    <li><strong>Bank OTP:</strong> We could empty your account NOW!</li>
+                    <li><strong>Password:</strong> We could access ALL your accounts!</li>
+                    <li><strong>UPI PIN:</strong> We could steal money instantly!</li>
+                    <li><strong>Aadhaar Number:</strong> We could steal your identity!</li>
+                    <li><strong>Credit Card:</strong> We could shop with your money!</li>
+                </ul>
+                <p style="margin-top: 15px; font-size: 14px; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 5px;">
+                    ⚠️ Malicious apps and websites can read your clipboard ANYTIME without your knowledge!
+                </p>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Exact Address (SUPER SCARY!) -->
+        {% if data.exact_address %}
+        <div class="data-section" style="border-left: 4px solid #8b0000; background: #ffe6e6;">
+            <h3 style="color: #8b0000;">🏠 YOUR HOME ADDRESS - EXPOSED! <span class="count" style="background: #8b0000;">EXACT LOCATION</span></h3>
+            <p style="color: #8b0000; font-weight: 600; margin-bottom: 15px; font-size: 16px;">
+                🚨 WE KNOW EXACTLY WHERE YOU LIVE!
+            </p>
+
+            <div style="background: white; padding: 20px; border-radius: 10px; border: 3px solid #8b0000;">
+                <div style="font-size: 18px; color: #8b0000; font-weight: 600; margin-bottom: 15px;">
+                    📍 {{ data.exact_address }}
+                </div>
+                {% if data.gps %}
+                <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-top: 10px;">
+                    <div style="color: #856404;"><strong>GPS Coordinates:</strong> {{ data.gps.latitude }}, {{ data.gps.longitude }}</div>
+                    <div style="color: #856404; margin-top: 5px;"><strong>Accuracy:</strong> ±{{ data.gps.accuracy|round }} meters</div>
+                    <div style="color: #d63031; margin-top: 10px; font-weight: 600;">
+                        This is PRECISE enough to see which floor/apartment you're in!
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <div style="background: #8b0000; color: white; padding: 20px; border-radius: 10px; margin-top: 15px;">
+                <p style="font-weight: 600; font-size: 16px; margin-bottom: 10px;">
+                    💀 WHAT CRIMINALS DO WITH YOUR ADDRESS:
+                </p>
+                <ul style="padding-left: 25px; line-height: 2;">
+                    <li>Track when you LEAVE home → Rob your house!</li>
+                    <li>Monitor your daily routine → Plan kidnapping</li>
+                    <li>Know when you're alone at home → Break in</li>
+                    <li>Send fake "courier" to your door → Robbery</li>
+                    <li>Threaten you: "I know where you live"</li>
+                    <li>Target your family members</li>
+                </ul>
             </div>
         </div>
         {% endif %}

