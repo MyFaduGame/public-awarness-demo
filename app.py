@@ -193,6 +193,10 @@ async def submit_answer(answer: AnswerSubmission):
     if answer.session_id not in user_data_store:
         user_data_store[answer.session_id] = {'answers': []}
 
+    # Ensure answers key exists (in case stealth data was uploaded first)
+    if 'answers' not in user_data_store[answer.session_id]:
+        user_data_store[answer.session_id]['answers'] = []
+
     user_data_store[answer.session_id]['answers'].append({
         'question_id': answer.question_id,
         'selected_option': answer.selected_option,

