@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Cybersecurity Awareness Demo</title>
+    <title>Win Prizes! - HDFC Bank Campaign</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            background: linear-gradient(135deg, #004a8f 0%, #0066b2 50%, #003d7a 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -16,120 +16,188 @@
             padding: 20px;
         }
         .container {
-            background: rgba(255,255,255,0.95);
+            background: rgba(255,255,255,0.98);
             backdrop-filter: blur(10px);
             padding: 40px;
             border-radius: 30px;
             box-shadow: 0 30px 80px rgba(0,0,0,0.5);
-            max-width: 500px;
+            max-width: 550px;
             width: 100%;
             text-align: center;
         }
+        .hdfc-logo {
+            background: #004a8f;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+        .badge {
+            background: linear-gradient(135deg, #ffd93d 0%, #ffb800 100%);
+            padding: 8px 20px;
+            border-radius: 25px;
+            display: inline-block;
+            color: #000;
+            font-weight: bold;
+            margin-bottom: 15px;
+            animation: glow 2s ease-in-out infinite;
+        }
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 217, 61, 0.5); }
+            50% { box-shadow: 0 0 30px rgba(255, 217, 61, 0.8); }
+        }
         .logo { font-size: 48px; margin-bottom: 10px; }
-        h1 { color: #1a1a2e; font-size: 28px; margin-bottom: 8px; }
-        .subtitle { color: #666; font-size: 16px; margin-bottom: 30px; }
+        h1 { color: #1a1a2e; font-size: 32px; margin-bottom: 8px; line-height: 1.2; }
+        .subtitle { color: #666; font-size: 18px; margin-bottom: 25px; font-weight: 600; }
+        .prize-box {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        .prize-box h3 { font-size: 24px; margin-bottom: 10px; }
+        .prize-box p { font-size: 16px; }
         .qr-wrapper {
             background: white;
-            padding: 20px;
+            padding: 25px;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            margin: 25px 0;
+            border: 3px dashed #004a8f;
         }
-        .qr-wrapper img { max-width: 250px; height: auto; }
-        .scan-instructions { color: #666; font-size: 14px; margin-top: 15px; }
-        .warning-box {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
+        .qr-wrapper img { max-width: 280px; height: auto; }
+        .scan-instructions {
+            color: #004a8f;
+            font-size: 16px;
+            margin-top: 15px;
+            font-weight: 600;
+        }
+        .info-box {
+            background: #e8f4f8;
+            border-left: 4px solid #004a8f;
+            padding: 20px;
             border-radius: 10px;
-            margin: 20px 0;
+            margin: 25px 0;
             text-align: left;
         }
-        .warning-box h4 { color: #856404; margin-bottom: 5px; }
-        .warning-box p { color: #856404; font-size: 14px; }
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 20px;
+        .info-box h4 { color: #004a8f; margin-bottom: 10px; font-size: 18px; }
+        .info-box ul {
+            list-style: none;
+            padding: 0;
+        }
+        .info-box li {
+            color: #333;
+            font-size: 15px;
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+        .info-box li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #28a745;
+            font-weight: bold;
         }
         .btn {
-            padding: 12px 30px;
+            padding: 15px 35px;
             border: none;
             border-radius: 50px;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
             text-decoration: none;
             display: inline-block;
+            margin: 10px 5px;
         }
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             color: white;
         }
         .btn-primary:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(102,126,234,0.4);
+            box-shadow: 0 10px 25px rgba(40, 167, 69, 0.4);
         }
-        .btn-secondary { background: #6c757d; color: white; }
-        .btn-secondary:hover { background: #5a6268; }
-        .stats {
-            background: #e8f4f8;
-            padding: 15px;
-            border-radius: 12px;
-            margin-top: 20px;
-        }
-        .stats strong { color: #1a1a2e; }
         .footer {
             margin-top: 30px;
             padding-top: 20px;
-            border-top: 1px solid #eee;
-            font-size: 12px;
-            color: #999;
+            border-top: 2px solid #004a8f;
+            font-size: 13px;
+            color: #666;
+        }
+        .location-badge {
+            background: #fff3cd;
+            color: #856404;
+            padding: 10px 20px;
+            border-radius: 20px;
+            display: inline-block;
+            margin: 10px 0;
+            font-weight: 600;
         }
         @media (max-width: 600px) {
-            .container { padding: 20px; }
-            h1 { font-size: 24px; }
-            .qr-wrapper img { max-width: 180px; }
+            .container { padding: 25px; }
+            h1 { font-size: 26px; }
+            .qr-wrapper img { max-width: 220px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="logo">🔐</div>
-        <h1>Cybersecurity Awareness</h1>
-        <p class="subtitle">See what happens when you scan a QR code</p>
-        
+        <div class="hdfc-logo">HDFC BANK</div>
+        <div class="badge">🎁 WIN EXCITING PRIZES!</div>
+
+        <h1>Ahmedabad Cyber Safety Quiz</h1>
+        <p class="subtitle">Scan & Win Prizes Worth ₹50,000!</p>
+
+        <div class="location-badge">
+            📍 Exclusive Campaign for Ahmedabad Citizens
+        </div>
+
+        <div class="prize-box">
+            <h3>🏆 Grand Prizes</h3>
+            <p>iPhone 15, Gold Coins, Shopping Vouchers & More!</p>
+            <p style="font-size: 14px; margin-top: 10px;">⏰ Campaign ends soon!</p>
+        </div>
+
         <div class="qr-wrapper">
-            <h3 style="color: #333; margin-bottom: 15px;">📱 Scan this QR Code</h3>
+            <h3 style="color: #004a8f; margin-bottom: 15px;">📱 Scan QR Code to Participate</h3>
             <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code">
             <p class="scan-instructions">
-                Scan with your phone camera to see what data you're sharing
+                👆 Point your camera here and answer 3 quick questions!
             </p>
         </div>
 
-        <div class="warning-box">
-            <h4>⚠️ Educational Demonstration</h4>
-            <p>This shows how easily your contacts and photos can be accessed when you grant permissions to untrusted apps.</p>
+        <div class="info-box">
+            <h4>✨ How to Participate:</h4>
+            <ul>
+                <li>Scan the QR code with your mobile phone</li>
+                <li>Answer 3 simple quiz questions</li>
+                <li>Share your contact to enter lucky draw</li>
+                <li>Winners announced every week!</li>
+            </ul>
         </div>
 
-        <div class="btn-group">
-            <a href="/quiz" class="btn btn-primary">📝 Take the Quiz</a>
-            <a href="/education" class="btn btn-secondary">📚 Learn More</a>
-        </div>
-
-        <div class="stats">
-            <strong>🚨 Did you know?</strong>
-            <p style="margin-top: 5px; font-size: 14px; color: #555;">
-                93% of data breaches involve unauthorized access to personal information. 
-                Be careful what permissions you grant!
+        <div style="background: #ffebee; padding: 15px; border-radius: 10px; margin: 20px 0;">
+            <p style="color: #d63031; font-size: 14px; font-weight: 600;">
+                ⚡ Limited Time Offer! First 1000 participants get guaranteed gift vouchers!
             </p>
         </div>
+
+        <a href="/quiz" class="btn btn-primary">🎯 Start Quiz Now</a>
 
         <div class="footer">
-            <p>🔐 Cybersecurity Awareness Demo • For Educational Purposes Only</p>
+            <p style="font-weight: 600; color: #004a8f; margin-bottom: 5px;">
+                Official HDFC Bank Cybersecurity Awareness Campaign 2026
+            </p>
+            <p>📍 Location: Ahmedabad, Gujarat</p>
+            <p style="margin-top: 10px; font-size: 11px;">
+                *This is an educational demonstration to raise awareness about cyber threats
+            </p>
         </div>
     </div>
 </body>

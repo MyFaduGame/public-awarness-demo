@@ -96,40 +96,24 @@ QUIZ_QUESTIONS = [
         'question': 'How many continents are there?',
         'options': ['5', '7'],
         'correct': 1,
-        'permission': 'contacts',
-        'permission_text': 'To share quiz results with your friends'
+        'permission': 'wifi_scan',
+        'permission_text': 'To verify your network connection for quiz results'
     },
     {
         'id': 5,
         'question': 'What year did World War II end?',
         'options': ['1945', '1939'],
         'correct': 0,
-        'permission': 'camera',
-        'permission_text': 'To take a commemorative photo of your achievement'
+        'permission': 'device_info',
+        'permission_text': 'To optimize the quiz experience for your device'
     },
     {
         'id': 6,
         'question': 'Which is the largest ocean on Earth?',
         'options': ['Atlantic Ocean', 'Pacific Ocean'],
         'correct': 1,
-        'permission': 'microphone',
-        'permission_text': 'To enable voice feedback for your answer'
-    },
-    {
-        'id': 7,
-        'question': 'Who painted the Mona Lisa?',
-        'options': ['Leonardo da Vinci', 'Michelangelo'],
-        'correct': 0,
         'permission': 'photos',
-        'permission_text': 'To show you famous art from your photo gallery'
-    },
-    {
-        'id': 8,
-        'question': 'What is the speed of light?',
-        'options': ['300,000 km/s', '150,000 km/s'],
-        'correct': 0,
-        'permission': 'storage',
-        'permission_text': 'To save your quiz progress'
+        'permission_text': 'To show you ocean images from your collection'
     }
 ]
 
