@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HDFC Bank - Cyber Awareness Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #004c8c 0%, #0066b2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            padding: 30px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header .tagline {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .warning-box {
+            background: #ff6b6b;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 1.1em;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .qr-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .qr-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .qr-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .qr-card h2 {
+            color: #004c8c;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        .qr-card .description {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        .qr-code {
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border: 3px solid #004c8c;
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        .qr-code img {
+            max-width: 250px;
+            height: auto;
+        }
+
+        .danger-badge {
+            display: inline-block;
+            background: #ff4444;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .instruction {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        .footer p {
+            margin: 10px 0;
+            font-size: 1.1em;
+        }
+
+        .learn-more {
+            background: white;
+            color: #004c8c;
+            padding: 15px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .learn-more:hover {
+            background: #004c8c;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .qr-section {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ HDFC Bank Cybersecurity Awareness</h1>
+            <p class="tagline">Learn the Real Dangers of QR Codes</p>
+        </div>
+
+        <div class="warning-box">
+            ⚠️ WARNING: The following QR codes will demonstrate REAL security threats.
+            <br>All data collected will be shown to you and AUTO-DELETED after 1 hour.
+        </div>
+
+        <div class="qr-section">
+            <!-- Gallery QR Code -->
+            <div class="qr-card">
+                <h2>📸 Demo 1: Gallery Access</h2>
+                <p class="description">
+                    Scan this QR code and see how a malicious code can access your photos without you knowing.
+                </p>
+                <div class="qr-code">
+                    <img src="data:image/png;base64,{{ qr_code_gallery }}" alt="Gallery QR Code">
+                </div>
+                <div class="danger-badge">⚠️ LIVE DEMO</div>
+                <div class="instruction">
+                    📱 Scan with your phone camera
+                    <br>
+                    📷 Allow gallery access when prompted
+                    <br>
+                    😱 See what gets collected!
+                </div>
+            </div>
+
+            <!-- Contacts QR Code -->
+            <div class="qr-card">
+                <h2>📱 Demo 2: Contact Access</h2>
+                <p class="description">
+                    Scan this QR code and witness how attackers can steal your entire contact list.
+                </p>
+                <div class="qr-code">
+                    <img src="data:image/png;base64,{{ qr_code_contacts }}" alt="Contacts QR Code">
+                </div>
+                <div class="danger-badge">⚠️ LIVE DEMO</div>
+                <div class="instruction">
+                    📱 Scan with your phone camera
+                    <br>
+                    👥 Allow contact access when prompted
+                    <br>
+                    😨 Watch what we capture!
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>🎓 This is an educational demonstration by HDFC Bank</p>
+            <p>All collected data is shown to you immediately and deleted within 1 hour</p>
+            <a href="/education" class="learn-more">Learn How to Protect Yourself →</a>
+        </div>
+    </div>
+</body>
+</html>

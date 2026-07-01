@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - HDFC Cyber Awareness</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #004c8c 0%, #0066b2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 3em;
+            font-weight: bold;
+            color: #004c8c;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .label {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .records-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .records-section h2 {
+            color: #004c8c;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #004c8c;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .badge.gallery {
+            background: #667eea;
+            color: white;
+        }
+
+        .badge.contacts {
+            background: #f5576c;
+            color: white;
+        }
+
+        .badge.shown {
+            background: #28a745;
+            color: white;
+        }
+
+        .badge.pending {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .refresh-btn {
+            background: #004c8c;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            background: #0066b2;
+            transform: translateY(-2px);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px;
+            color: #999;
+            font-size: 1.2em;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            th, td {
+                padding: 10px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ HDFC Bank - Admin Dashboard</h1>
+            <p>Cybersecurity Awareness Demo Analytics</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="number">{{ records|length }}</div>
+                <div class="label">Total Demonstrations</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">{{ records|selectattr('2', 'equalto', 'photo')|list|length }}</div>
+                <div class="label">Gallery Access Demos</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">{{ records|selectattr('2', 'equalto', 'screenshot')|list|length }}</div>
+                <div class="label">Contact Access Demos</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">{{ records|selectattr('8', 'equalto', 1)|list|length }}</div>
+                <div class="label">Users Educated</div>
+            </div>
+        </div>
+
+        <div class="records-section">
+            <button class="refresh-btn" onclick="location.reload()">🔄 Refresh Dashboard</button>
+
+            <h2>Recent Demonstrations</h2>
+
+            <div class="table-container">
+                {% if records %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Session ID</th>
+                            <th>QR Type</th>
+                            <th>Data Type</th>
+                            <th>Collected At</th>
+                            <th>Expires At</th>
+                            <th>Status</th>
+                            <th>IP Address</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in records %}
+                        <tr>
+                            <td><code>{{ record[1][:16] }}...</code></td>
+                            <td>
+                                <span class="badge {{ record[2] }}">
+                                    {% if record[2] == 'gallery' %}📸 Gallery{% else %}📱 Contacts{% endif %}
+                                </span>
+                            </td>
+                            <td>{{ record[3] }}</td>
+                            <td>{{ record[4] }}</td>
+                            <td>{{ record[5] }}</td>
+                            <td>
+                                {% if record[8] == 1 %}
+                                <span class="badge shown">✅ Shown</span>
+                                {% else %}
+                                <span class="badge pending">⏳ Pending</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ record[6] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty-state">
+                    📊 No demonstrations yet. Share the QR codes to start!
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div style="margin-top: 30px; text-align: center; color: #666;">
+            <p>🔒 All data is automatically deleted after 1 hour</p>
+            <p><a href="/" style="color: #004c8c; text-decoration: none; font-weight: bold;">← Back to Demo Page</a></p>
+        </div>
+    </div>
+
+    <script>
+        // Auto-refresh every 30 seconds
+        setTimeout(() => {
+            location.reload();
+        }, 30000);
+    </script>
+</body>
+</html>
